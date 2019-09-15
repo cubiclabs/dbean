@@ -4,7 +4,10 @@ component{
 		"schemas": {},
 		"schemaPath": getDefaultSchemaPath(),
 		"modelPath": "/models/",
-		"beanConfigPath": "/models/beanConfigs/",
+		"beanConfigPath": [
+			"/models/beanConfigs/",
+			"[model]"
+		],
 		"tablePrefix": "tbl_"
 	};
 	

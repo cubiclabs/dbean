@@ -1,5 +1,6 @@
 component{
 	this.definition = {
+		schema: "default",
 		table: "tbl_test",
 		joins: [
 			{

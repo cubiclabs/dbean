@@ -15,11 +15,17 @@ component{
 		return this;
 	}
 
+	/**
+	* @hint returns our parent db object
+	*/
 	public any function db(){
 		return variables.db;
 	}
 	
 
+	/**
+	* @hint set our target bean name - we can include Bean, Gateway and Service names here.
+	*/
 	public void function setBeanName(string beanName){
 		local.root = arguments.beanName;
 		if(right(local.root, 4) IS "Bean"){
@@ -34,7 +40,9 @@ component{
 	}
 
 
-
+	/**
+	* @hint scans search paths for a bean config object
+	*/
 	public function getConfigObject(){
 
 		// scan our paths
@@ -77,9 +85,29 @@ component{
 			}	
 		}
 
+		// config is not found...
+		// check our schema for a matching table name and create a blank config if it is valid
+		try{
+			local.table = variables.db.getTableSchema("#variables.db.getSetting("tablePrefix")##variables._beanName#", variables._schema);
+			local.config = {
+				definition: {
+					schema: variables._schema,
+					table: "#variables.db.getSetting("tablePrefix")##variables._beanName#",
+				}
+			}
+			return local.config;
+		}catch(e){
+			throw("Config not found for bean '#variables._beanName#' using schema '#variables._schema#' and table not found in schema", "dbean.core.configreader");
+		}
+
+
+
 		throw("Config not found for bean '#variables._beanName#' using schema '#variables._schema#'.", "dbean.core.configreader");
 	}
 
+	/**
+	* @hint does the schema for a given config bean match our target schema
+	*/
 	public boolean function isMatchedSchema(any oConfig){
 		local.config = arguments.oConfig.definition;
 
@@ -94,6 +122,9 @@ component{
 		return false;
 	}
 
+	/**
+	* @hint get a config object and parse its contents
+	*/
 	public void function readConfig(){
 		
 		variables._configObject = getConfigObject();
@@ -146,6 +177,9 @@ component{
 		}
 	}
 
+	/**
+	* @hint construct a bean instancve data struct from our config and schema table information
+	*/
 	public struct function buildInstance(){
 		local.inst = {};
 		for(local.col in variables._config.cols){
@@ -161,10 +195,16 @@ component{
 		return local.inst;
 	}
 
+	/**
+	* @hint returns our parsed config
+	*/
 	public any function getConfig(){
 		return variables._config;
 	}
 
+	/**
+	* @hint returns our column names
+	*/
 	public any function columnList(){
 		if(len(variables._config.joinColList)){
 			return listAppend(variables._config.colList, variables._config.joinColList);
@@ -172,10 +212,16 @@ component{
 		return variables._config.colList;
 	}
 
+	/**
+	* @hint returns our table schema columns
+	*/
 	public any function columns(){
 		return variables._config.cols;
 	}
 
+	/**
+	* @hint returns our config joins
+	*/
 	public any function joins(){
 		if(structKeyExists(variables._config, "joins")){
 			return variables._config.joins;
@@ -183,6 +229,9 @@ component{
 		return [];
 	}
 
+	/**
+	* @hint returns our many to many config
+	*/
 	public any function manyToMany(){
 		if(structKeyExists(variables._config, "manyTomany")){
 			return variables._config.manyTomany;
@@ -190,6 +239,9 @@ component{
 		return [];
 	}
 
+	/**
+	* @hint returns a specific many to many config item
+	*/
 	public any function getManyToMany(string name){
 		local.def = manyToMany();
 		for(local.manyInfo in local.def){
@@ -200,22 +252,37 @@ component{
 		return false;
 	}
 
+	/**
+	* @hint returns our config table name
+	*/
 	public any function table(){
 		return variables._config.table;
 	}
 
+	/**
+	* @hint returns our config schema name
+	*/
 	public any function schema(){
 		return variables._config.schema;
 	}
 
+	/**
+	* @hint returns a config column 
+	*/
 	public struct function getColumn(string colName){
 		return variables._config.colHash[arguments.colName]
 	}
 
+	/**
+	* @hint returns true if a given column name exists
+	*/
 	public boolean function isColumnDefined(string colName){
 		return structKeyExists(variables._config.colHash, arguments.colName);
 	}
 
+	/**
+	* @hint returns the column name of our primary key
+	*/
 	public string function getPK(){
 		if(variables._config.hasPK){
 			return variables._config.pk.name

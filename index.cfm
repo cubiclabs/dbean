@@ -2,7 +2,11 @@
 <cfset db = new com.dbean.db({
 	schemas: {
 		default: "test"
-	}
+	},
+	beanConfigPath: [
+		"/models/beanConfigs/",
+		"[model]"
+	]
 })>
 
 <!--- <cfdump var="#db.getDefaultSchemaPath()#">
