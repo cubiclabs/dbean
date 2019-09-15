@@ -10,14 +10,15 @@
 	//this.sessioncookie.httponly = true;
 	//this.sessionTimeout = createTimeSpan(0, 0, 30, 0);
 
+	include template=".secrets.cfm";
 
 	this.datasources["test"] = {
 		class: 'com.microsoft.sqlserver.jdbc.SQLServerDriver',
 		bundleName: 'mssqljdbc4',
 		bundleVersion: '4.0.2206.100',
 		connectionString: 'jdbc:sqlserver://localhost:1433;DATABASENAME=testData;sendStringParametersAsUnicode=true;SelectMethod=direct',
-		username: getSystemProperty("DBUSERNAME"),
-		password: getSystemProperty("DBPASSWORD"),
+		username: secrets.DBUSERNAME,
+		password: secrets.DBPASSWORD,
 		connectionLimit: 100 // default:-1
 	};
 	
@@ -47,16 +48,5 @@
 		reloadOnChange= false 
 	};*/
 
-	/**
-	* @hint reads a JVM environment variable / system property
-	* @BoltMethod
-	*/
-	public any function getSystemProperty(string key, string defaultValue){
-		local.system = CreateObject("java", "java.lang.System");
-		local.value = system.getenv(arguments.key);
-		if(isNUll(local.value)){
-			local.value = system.getProperty(arguments.key, arguments.defaultValue);	
-		}
-		return local.value;
-	}
+	
 }

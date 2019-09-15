@@ -2,12 +2,14 @@ component{
 
 	variables._beanName = "";
 	variables._config = {};
+	variables._schema = "";
 
 	/**
 	* @hint constructor
 	*/
-	public function init(string beanName, any db){
+	public function init(string beanName, any db, string schema="default"){
 		variables.db = arguments.db;
+		variables._schema = arguments.schema;
 		setBeanName(arguments.beanName);
 		readConfig();
 		return this;
@@ -31,19 +33,70 @@ component{
 		variables._beanName = local.root;
 	}
 
-	public function getBeanConfigPath(){
-		if(variables.db.getSetting("beanConfigPath") IS "[model]"){
-			// config is stored within mode directory
-			return variables.db.getDotPath(variables.db.getSetting("modelPath")) & "." & variables._beanName & "." & variables._beanName & "Config";
-		}else{
-			// configs are stored together in a single directory
-			return variables.db.getDotPath(variables.db.getSetting("beanConfigPath")) & "." & variables._beanName;
-		}	
+
+
+	public function getConfigObject(){
+
+		// scan our paths
+		local.beanPaths = variables.db.getSetting("beanConfigPath");
+		if(!isArray(local.beanPaths)){
+			local.beanPaths = listToArray(local.beanPaths);
+		}
+
+		local.modelPaths = variables.db.getSetting("modelPath");
+		if(!isArray(local.modelPaths)){
+			local.modelPaths = listToArray(local.modelPaths);
+		}
+
+		for(local.beanPath in local.beanPaths){
+			if(local.beanPath IS "[model]"){
+				// config is stored within model directory
+
+				for(local.modelPath in local.modelPaths){
+					local.fullModelPath = expandPath(local.modelPath);
+					if(fileExists(local.fullModelPath & variables._beanName & "\" & variables._beanName & "Config.cfc")){
+						local.configPath = variables.db.getDotPath(local.modelPath) & "." & variables._beanName & "." & variables._beanName & "Config";
+						local.oConfig = new "#local.configPath#"();
+						if(isMatchedSchema(local.oConfig)){
+							return local.oConfig;
+						}
+					}
+				}
+
+				
+			}else{
+				// configs are stored together in a single directory
+				local.fullConfigPath = expandPath(local.beanPath);
+				if(fileExists(local.fullConfigPath & variables._beanName &".cfc")){
+					local.configPath = variables.db.getDotPath(local.beanPath) & "." & variables._beanName;
+					local.oConfig = new "#local.configPath#"();
+					if(isMatchedSchema(local.oConfig)){
+						return local.oConfig;
+					}
+				}
+			}	
+		}
+
+		throw("Config not found for bean '#variables._beanName#' using schema '#variables._schema#'.", "dbean.core.configreader");
+	}
+
+	public boolean function isMatchedSchema(any oConfig){
+		local.config = arguments.oConfig.definition;
+
+		if(!structKeyExists(local.config, "schema")){
+			local.config.schema = "default";
+		}
+
+		if(local.config.schema IS variables._schema){
+			return true;
+		}
+
+		return false;
 	}
 
 	public void function readConfig(){
 		
-		variables._configObject = new "#getBeanConfigPath()#"();
+		variables._configObject = getConfigObject();
 		variables._config = variables._configObject.definition;
 
 		// set our default schema if one is not defined
@@ -149,6 +202,10 @@ component{
 
 	public any function table(){
 		return variables._config.table;
+	}
+
+	public any function schema(){
+		return variables._config.schema;
 	}
 
 	public struct function getColumn(string colName){

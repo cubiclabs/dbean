@@ -98,7 +98,12 @@ component{
 	* @hint returns a bean object
 	*/
 	public any function bean(string beanName, any pkValue=0){
-		local.beanConfig = getBeanConfig(arguments.beanName);
+		local.schema = "default";
+		if(listlen(arguments.beanName, ".") EQ 2){
+			local.schema = listFirst(arguments.beanName, ".");
+			arguments.beanName = listLast(arguments.beanName, ".");
+		}
+		local.beanConfig = getBeanConfig(arguments.beanName, local.schema);
 		local.bean = new core.Bean(local.beanConfig);
 		// set our service and gateway for our bean
 
@@ -229,14 +234,20 @@ component{
 	/**
 	* @hint returns the dot path to a schema config file
 	*/
-	public any function getBeanConfig(string beanName){
-		if(structKeyExists(variables._beanConfigs, arguments.beanName)){
+	public any function getBeanConfig(string beanName, string schema="default"){
+		if(structKeyExists(variables._beanConfigs, arguments.schema) 
+			AND structKeyExists(variables._beanConfigs[arguments.schema], arguments.beanName)){
 			// cached config reader
-			return variables._beanConfigs[arguments.beanName];
+			return variables._beanConfigs[arguments.schema][arguments.beanName];
 		}
 		// we need a new config reader
-		variables._beanConfigs[arguments.beanName] = new core.ConfigReader(arguments.beanName, this);
-		return variables._beanConfigs[arguments.beanName];
+		local.beanConfig = new core.ConfigReader(arguments.beanName, this, arguments.schema);
+		if(arguments.schema IS local.beanConfig.schema()){
+			variables._beanConfigs[local.beanConfig.schema()][arguments.beanName] = local.beanConfig;
+			return variables._beanConfigs[arguments.schema][arguments.beanName];
+		}else{
+			throw("Unmatched schema for '#arguments.beanName#'. '#local.beanConfig.schema()#' does not match '#arguments.schema#'", "dbean.db");
+		}
 	}
 
 
