@@ -8,7 +8,7 @@ component{
 	* @hint constructor
 	*/
 	public function init(string beanName, any db, string schema="default"){
-		variables.db = arguments.db;
+		variables._db = arguments.db;
 		variables._schema = arguments.schema;
 		setBeanName(arguments.beanName);
 		readConfig();
@@ -19,7 +19,7 @@ component{
 	* @hint returns our parent db object
 	*/
 	public any function db(){
-		return variables.db;
+		return variables._db;
 	}
 	
 
@@ -39,6 +39,13 @@ component{
 		variables._beanName = local.root;
 	}
 
+	/**
+	* @hint returns our bean name
+	*/
+	public string function getBeanName(){
+		return variables._beanName;
+	}
+
 
 	/**
 	* @hint scans search paths for a bean config object
@@ -46,12 +53,12 @@ component{
 	public function getConfigObject(){
 
 		// scan our paths
-		local.beanPaths = variables.db.getSetting("beanConfigPath");
+		local.beanPaths = db().getSetting("beanConfigPath");
 		if(!isArray(local.beanPaths)){
 			local.beanPaths = listToArray(local.beanPaths);
 		}
 
-		local.modelPaths = variables.db.getSetting("modelPath");
+		local.modelPaths = db().getSetting("modelPath");
 		if(!isArray(local.modelPaths)){
 			local.modelPaths = listToArray(local.modelPaths);
 		}
@@ -63,7 +70,7 @@ component{
 				for(local.modelPath in local.modelPaths){
 					local.fullModelPath = expandPath(local.modelPath);
 					if(fileExists(local.fullModelPath & variables._beanName & "\" & variables._beanName & "Config.cfc")){
-						local.configPath = variables.db.getDotPath(local.modelPath) & "." & variables._beanName & "." & variables._beanName & "Config";
+						local.configPath = db().getDotPath(local.modelPath) & "." & variables._beanName & "." & variables._beanName & "Config";
 						local.oConfig = new "#local.configPath#"();
 						if(isMatchedSchema(local.oConfig)){
 							return local.oConfig;
@@ -76,7 +83,7 @@ component{
 				// configs are stored together in a single directory
 				local.fullConfigPath = expandPath(local.beanPath);
 				if(fileExists(local.fullConfigPath & variables._beanName &".cfc")){
-					local.configPath = variables.db.getDotPath(local.beanPath) & "." & variables._beanName;
+					local.configPath = db().getDotPath(local.beanPath) & "." & variables._beanName;
 					local.oConfig = new "#local.configPath#"();
 					if(isMatchedSchema(local.oConfig)){
 						return local.oConfig;
@@ -88,11 +95,11 @@ component{
 		// config is not found...
 		// check our schema for a matching table name and create a blank config if it is valid
 		try{
-			local.table = variables.db.getTableSchema("#variables.db.getSetting("tablePrefix")##variables._beanName#", variables._schema);
+			local.table = db().getTableSchema("#db().getSetting("tablePrefix")##variables._beanName#", variables._schema);
 			local.config = {
 				definition: {
 					schema: variables._schema,
-					table: "#variables.db.getSetting("tablePrefix")##variables._beanName#",
+					table: "#db().getSetting("tablePrefix")##variables._beanName#",
 				}
 			}
 			return local.config;
@@ -137,12 +144,12 @@ component{
 
 		// set our default table if one is not defined
 		if(!structKeyExists(variables._config, "table")){
-			variables._config.table = "#variables.db.getSetting("tablePrefix")##variables._beanName#";
+			variables._config.table = "#db().getSetting("tablePrefix")##variables._beanName#";
 		}
 		
 		// find our table columns and flavour and dsn from our schema definition
-		local.table = variables.db.getTableSchema(variables._config.table, variables._config.schema);
-		local.schema = variables.db.getSchema(variables._config.schema);
+		local.table = db().getTableSchema(variables._config.table, variables._config.schema);
+		local.schema = db().getSchema(variables._config.schema);
 		
 		structAppend(variables._config, local.table);
 		variables._config.dsn = local.schema.dsn;

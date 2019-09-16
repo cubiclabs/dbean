@@ -12,29 +12,29 @@ component accessors="true"{
 	* @hint constructor
 	*/
 	public function init(any beanConfig){
-		variables.config = arguments.beanConfig;
-		pop(data:variables.config.buildInstance(), dirty:false);
+		variables._config = arguments.beanConfig;
+		pop(data:config().buildInstance(), dirty:false);
 		return this;
 	}
 
 	/**
 	* @hint returns our config object
 	*/
-	public struct function getConfig(){
-		return variables.config;
+	public struct function config(){
+		return variables._config;
 	}
 
 	/**
 	* @hint returns our parent db object
 	*/
 	public any function db(){
-		return variables.config.db();
+		return config().db();
 	}
 
 	/**
 	* @hint returns a duplicate of our instance data
 	*/
-	public struct function getSnapShot(boolean isPrev=false){
+	public struct function snapShot(boolean isPrev=false){
 		if(arguments.isPrev){
 			return duplicate(variables.instancePrev);
 		}else{
@@ -45,29 +45,43 @@ component accessors="true"{
 	/**
 	* @hint returns our bean definition
 	*/
-	public string function getDefinition(){
+	public string function ___definition(){
 		return variables.definition;
+	}
+
+	/**
+	* @hint returns our bean name
+	*/
+	public string function name(){
+		return config().getBeanName();
+	}
+
+	/**
+	* @hint returns a gateway for our bean
+	*/
+	public any function gateway(){
+		return db().gateway(config().schema());
 	}
 
 	/**
 	* @hint returns our primary key column name
 	*/
-	public string function getPK(){
-		return variables.config.getPK();
+	public string function PK(){
+		return config().getPK();
 	}
 
 	/**
 	* @hint returns beans ID using our primary key value
 	*/
 	public string function getID(){
-		return variables.instance[getPK()];
+		return variables.instance[PK()];
 	}
 	
 	/**
 	* @hint sets our beans ID for our primary key column
 	*/
 	public string function setID(any id){
-		return variables.instance[getPK()] = arguments.id;
+		return variables.instance[PK()] = arguments.id;
 		setDirty();
 	}
 
@@ -91,7 +105,73 @@ component accessors="true"{
 	public void function setDirty(){
 		variables.isDirty = true;
 	}
+	
+	/**
+	* @hint save our bean to the database
+	*/
+	/**
+	* @hint save our given bean
+	*/
+	public boolean function save(){
+
+		if(getID()){
+			// UPDATE
+			local.dec = gateway().updateBean(name());
+			for(local.col in config().columns()){
+				if(!structKeyExists(local.col, "pk") OR !local.col.pk){
+					local.dec.set(local.col.name, get(local.col.name));
+				}
+			}
+
+			// TODO: special columns
+
+			local.dec.where(PK() & "= :pk")
+				.withParam("pk", getID())
+				.go();
+
+		}else{
+			// INSERT
+			local.dec = gateway().insertBean(name());
+			for(local.col in config().columns()){
+				if(!structKeyExists(local.col, "pk") OR !local.col.pk){
+					local.dec.set(local.col.name, get(local.col.name));
+				}
+			}
+
+			// TODO: special columns
+
+			local.result = local.dec.go();
+			local.id = gateway().getInsertID(local.result);
+			setID(local.id);
+		}
+
+		// TODO: check for many-to-many data
+		saveLinkedData();
 		
+		
+
+		return true;
+	}
+
+	/**
+	* @hint deletes our bean from the database
+	*/
+	public boolean function delete(){
+		if(getID()){
+			gateway().deleteBean(name())
+				.where(PK() & "= :pk")
+				.withParam("pk", getID())
+				.go();
+
+			// TODO: check for many-to-many data
+
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+
 	/**
 	* @hint gets an instance value
 	*/
@@ -106,7 +186,7 @@ component accessors="true"{
 			return variables[local.variableName][arguments.key];
 		}
 
-		return null;
+		return;
 	}
 	
 	/**
@@ -114,7 +194,7 @@ component accessors="true"{
 	*/
 	public void function set(string key, any value){
 		
-		if(variables.config.isColumnDefined(arguments.key)){
+		if(config().isColumnDefined(arguments.key)){
 			variables.instance[arguments.key] = arguments.value;
 			setDirty();
 		}else{
@@ -172,7 +252,7 @@ component accessors="true"{
 	public void function reset(){
 		variables.instance = {};
 		variables.instancePrev = {};
-		pop(data:variables.config.buildInstance(), dirty:false);
+		pop(data:config().buildInstance(), dirty:false);
 	}
 
 	/**
@@ -187,10 +267,108 @@ component accessors="true"{
 	}
 
 	/**
-	* @hint returns the contents of a linked data key
+	* @hint returns linked data
 	*/
 	public any function getLinked(string manyToManyName, boolean forceRead=false, string condition="", struct params={}){
-		return variables.service.getLinked(this, arguments.manyToManyName, arguments.forceRead, arguments.condition, arguments.params);
+		local.linkedConfig = config().getManyToMany(arguments.manyToManyName);
+		if(isBoolean(local.linkedConfig)){
+			throw(message="Many To Many relationship '#arguments.manyToManyName#' is not defined in bean '#name()#'", type="dbean.bean");
+		}
+
+		if(isLinkedDataDefined(arguments.manyToManyName) AND !arguments.forceRead){
+			return getLinkedData(arguments.manyToManyName);
+		}
+
+		local.relatedModel = db().getBeanConfig(local.linkedConfig.model);
+		local.relatedPK = local.relatedModel.getPK();
+		
+		// query parameters
+		local.params = {
+			FK1: {
+				value: getID(),
+				cfsqltype: config().getConfig().pk.cfSQLDataType
+			}
+		}
+
+		if(!structKeyExists(local.linkedConfig, "FK1")){
+			local.linkedConfig.FK1 = replaceNoCase(PK(), "_id", "ID");
+		}
+		if(!structKeyExists(local.linkedConfig, "FK2")){
+			local.linkedConfig.FK2 = replaceNoCase(local.relatedPK, "_id", "ID");
+		}
+
+		// build our query
+		local.dec = gateway().fromBean(local.relatedModel.getBeanName());
+		local.where = "#local.relatedPK# IN (SELECT #local.linkedConfig.FK2# FROM #local.linkedConfig.intermediary# WHERE #local.linkedConfig.FK1# = :FK1)";
+		if(len(arguments.condition)){
+			local.where = local.where & " AND " & arguments.condition;
+		}
+		local.dec.where(local.where);
+
+		// merge params
+		structAppend(local.params, arguments.params);
+		local.dec.withParams(local.params);
+
+		// order
+		if(structKeyExists(local.linkedConfig, "order")){
+			local.dec.orderBy(local.linkedConfig.order);
+		}
+
+		// execute our query
+		local.q = local.dec.get();
+
+		// save data into our bean
+		setLinkedData(arguments.manyToManyName, local.q);
+
+		return getLinkedData(arguments.manyToManyName);
+	}
+
+	/**
+	* @hint save any linked data within our bean
+	*/
+	public any function saveLinkedData(){
+		local.linkedDataToSave = getLinkedSaveData();
+		for(local.linkedKey in local.linkedDataToSave){
+
+			local.linkedConfig = config().getManyToMany(local.linkedKey);
+			if(isStruct(local.linkedConfig)){
+				local.linkedData = local.linkedDataToSave[local.linkedKey];
+
+				local.relatedModel = db().getBeanConfig(local.linkedConfig.model);
+				local.relatedPK = local.relatedModel.getPK();
+				
+				if(!structKeyExists(local.linkedConfig, "FK1")){
+					local.linkedConfig.FK1 = replaceNoCase(PK(), "_id", "ID");
+				}
+				if(!structKeyExists(local.linkedConfig, "FK2")){
+					local.linkedConfig.FK2 = replaceNoCase(local.relatedPK, "_id", "ID");
+				}
+
+				local.params = {
+					FK1: {
+						value: getID(),
+						cfsqltype: config().getConfig().pk.cfSQLDataType
+					}
+				}
+
+				local.sqlDELETE = "DELETE FROM #local.linkedConfig.intermediary# 
+					WHERE #local.linkedConfig.FK1# = :FK1 ;";
+				local.sqlINSERT = "";
+				if(arrayLen(local.linkedData)){
+					local.sqlINSERT = "INSERT INTO #local.linkedConfig.intermediary# (#local.linkedConfig.FK1#, #local.linkedConfig.FK2#) 
+						SELECT :FK1 AS #local.linkedConfig.FK1#, #local.relatedPK# 
+						FROM #local.relatedModel.table()# 
+						WHERE #local.relatedPK# IN (:linked);";
+					local.params.linked = {
+						value: arrayToList(local.linkedData),
+						cfsqltype: local.relatedModel.getConfig().pk.cfSQLDataType,
+						list: true
+					}
+				}
+
+				gateway().runQuery(local.sqlDELETE & chr(13) & chr(10) & local.sqlINSERT, local.params);
+			}
+		}
 	}
 
 
@@ -248,8 +426,8 @@ component accessors="true"{
 	/**
 	* @hint sets a value for a linked save data key
 	*/
-	public void function setLinkedSaveData(string key, any value){
-		variables.linkedSaveData[arguments.key] = arguments.value;
+	public void function setLinked(string manyToManyName, any value){
+		variables.linkedSaveData[arguments.manyToManyName] = arguments.value;
 	}
 
 	/**
@@ -261,6 +439,39 @@ component accessors="true"{
 		}else{
 			structDelete(variables.linkedSaveData, arguments.key);
 		}
+	}
+
+	/**
+	* @hint builds a default SELECT statement based on our bean config
+	*/
+	public string function tableSelect(){
+		if(structKeyExists(variables, "tableSelectString")){
+			return variables.tableSelectString;
+		}
+
+		local.tableString = config().table();
+		for(local.join in config().joins()){
+			local.joinType = "LEFT OUTER";
+			if(structKeyExists(local.join, "joinType")){
+				local.joinType = local.join.joinType;
+			}
+			if(structKeyExists(local.join, "condition")){
+				local.tableString = local.tableString & " #local.joinType# JOIN #local.join.table# ON #local.join.condition# ";
+			}else{
+				local.joinFromTable = config().table();
+				local.joinFromCol = local.join.from;
+				if(listLen(local.joinFromCol, ".") EQ 2){
+					local.joinFromTable = listFirst(local.joinFromCol, ".");
+					local.joinFromCol = listLast(local.joinFromCol, ".");
+				}
+				local.tableString = local.tableString & " #local.joinType# JOIN #local.join.table# ON #local.join.table#.#local.join.on# = #local.joinFromTable#.#local.joinFromCol# ";
+			}
+		}
+
+		// cache this
+		variables.tableSelectString = local.tableString;
+
+		return local.tableString;
 	}
 
 }

@@ -84,19 +84,32 @@ component{
 	/**
 	* @hint returns a gateway object
 	*/
-	public any function gateway(string model){
-		local.model = parseModelNamespace(arguments.model);
-		return Bolt().getObject("#local.model.name#Gateway@#local.model.namespace#", {db:this});
+	public any function gateway(string schema="default"){
+		return getSchema(arguments.schema).gateway;
 	}
 
 	/**
-	* @hint returns a service object
+	* @hint returns a bean iterator object
 	*/
-	public any function service(string model){
-		local.model = parseModelNamespace(arguments.model);
-		return Bolt().getObject("#local.model.name#Service@#local.model.namespace#", {db:this});
+	public any function iterator(
+		string beanName,
+		string where="",
+		string orderBy="",
+		numeric limit=0,
+		numeric limitOffset=0,
+		boolean withTotal=false,
+		any data){
+		return new core.Iterator(this,
+			arguments.beanName,
+			arguments.where,
+			arguments.orderBy,
+			arguments.limit,
+			arguments.limitOffset,
+			arguments.withTotal,
+			arguments.data);
 	}
 
+	
 	/**
 	* @hint returns a bean object
 	*/
@@ -108,10 +121,9 @@ component{
 		}
 		local.beanConfig = getBeanConfig(arguments.beanName, local.schema);
 		local.bean = new core.Bean(local.beanConfig);
-		// set our service and gateway for our bean
-
+		
 		if(arguments.pkValue NEQ 0){
-			local.qData = gateway(arguments.model).get(arguments.pkValue);
+			local.qData = gateway(local.schema).getBean(arguments.beanName, arguments.pkValue);
 			if(local.qData.recordCount){
 				local.bean.pop(local.qData);
 			}
@@ -209,9 +221,11 @@ component{
 		local.schemaCFCPath = getSchemaAbsolutePath(arguments.schemaName);
 		if(fileExists(local.schemaCFCPath)){
 			local.cfcDotPath = getSchemaDotPath(arguments.schemaName);
-			variables._schemas[arguments.schemaName] = new "#local.cfcDotPath#"().schema;
+			local.schemaConfig = new "#local.cfcDotPath#"().schema;
+			variables._schemas[arguments.schemaName] = local.schemaConfig;
 			variables._schemas[arguments.schemaName].path = local.cfcDotPath;
 			variables._schemas[arguments.schemaName].fullPath = local.schemaCFCPath;
+			variables._schemas[arguments.schemaName].gateway = new core.Gateway(local.schemaConfig, this);
 			return true;
 		}
 		return false;
@@ -253,6 +267,9 @@ component{
 		}
 	}
 
+
+	// Gateway
+	// ======================================================
 
 
 }

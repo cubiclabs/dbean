@@ -1,12 +1,12 @@
 component{
 
+	variables.tableSelects = {};
 
 
 	/**
 	* @hint constructor
 	*/
-	public any function init(any config){
-		variables.config = arguments.config;
+	public any function init(){
 		return this;
 	}
 
@@ -14,13 +14,14 @@ component{
 	/**
 	* @hint build a string from our config for use in select statements
 	*/
-	public string function tableSelect(){
-		if(structKeyExists(variables, "tableSelectString")){
-			return variables.tableSelectString;
+	public string function tableSelect(any beanConfig){
+		if(structKeyExists(variables.tableSelects, arguments.beanConfig.schema())
+			AND structKeyExists(variables.tableSelects[arguments.beanConfig.schema()], arguments.beanConfig.getBeanName())){
+			return variables.tableSelects[arguments.beanConfig.schema()][arguments.beanConfig.getBeanName()];
 		}
 
-		local.tableString = variables.config.getConfig().table;
-		for(local.join in variables.config.joins()){
+		local.tableString = arguments.beanConfig.table();
+		for(local.join in arguments.beanConfig.joins()){
 			local.joinType = "LEFT OUTER";
 			if(structKeyExists(local.join, "joinType")){
 				local.joinType = local.join.joinType;
@@ -28,7 +29,7 @@ component{
 			if(structKeyExists(local.join, "condition")){
 				local.tableString = local.tableString & " #local.joinType# JOIN #local.join.table# ON #local.join.condition# ";
 			}else{
-				local.joinFromTable = variables.config.getConfig().table;
+				local.joinFromTable = arguments.beanConfig.table();
 				local.joinFromCol = local.join.from;
 				if(listLen(local.joinFromCol, ".") EQ 2){
 					local.joinFromTable = listFirst(local.joinFromCol, ".");
@@ -39,7 +40,7 @@ component{
 		}
 
 		// cache this
-		variables.tableSelectString = local.tableString;
+		variables.tableSelects[arguments.beanConfig.schema()][arguments.beanConfig.getBeanName()] = local.tableString;
 
 		return local.tableString;
 	}

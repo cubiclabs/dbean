@@ -18,6 +18,12 @@ component{
 				order: "categoryOrderKey ASC"
 			}
 		],
-		specialColumns: []
+		specialColumns: [
+			{
+				column: "startDate",
+				insert: false,
+				update: false
+			}
+		]
 	}
 }
