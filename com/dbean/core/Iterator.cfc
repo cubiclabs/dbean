@@ -2,6 +2,9 @@ component{
 
 	/*
 
+	USAGE
+	====================
+
 	it = db.iterator(beanName:"News", data:variables.qNews)>
 
 	do{

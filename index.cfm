@@ -23,6 +23,8 @@
 <cfdump var="#bean.snapshot()#">
 <!--- <cfset bean.save()> --->
 
+
+
 <cfdump var="#db.gateway()
 	.fromBean("test")
 	//.select("test_id, name, startDate")
@@ -45,7 +47,7 @@
 <cfset bean = db.bean("test", 4)>
 <cfdump var="#bean.snapshot()#">
 <cfdump var="#bean.getLinked("categories")#">
-<cfset bean.setStartDate(now())>
+<!--- <cfset bean.setStartDate(now())> --->
 <cfset bean.setDec(1.236)>
 <cfset bean.setLinked("categories", [1,4])>
 <cfset bean.save()>

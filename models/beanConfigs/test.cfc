@@ -21,8 +21,11 @@ component{
 		specialColumns: [
 			{
 				column: "startDate",
-				insert: false,
-				update: false
+				//insert: false,
+				updateValue: function(bean){
+					return now();
+				},
+				//update: false
 			}
 		]
 	}

@@ -109,19 +109,12 @@ component accessors="true"{
 	/**
 	* @hint save our bean to the database
 	*/
-	/**
-	* @hint save our given bean
-	*/
 	public boolean function save(){
 
 		if(getID()){
 			// UPDATE
 			local.dec = gateway().updateBean(name());
-			for(local.col in config().columns()){
-				if(!structKeyExists(local.col, "pk") OR !local.col.pk){
-					local.dec.set(local.col.name, get(local.col.name));
-				}
-			}
+			setBeanDeclarationParamters(local.dec, "update");
 
 			// TODO: special columns
 
@@ -132,11 +125,7 @@ component accessors="true"{
 		}else{
 			// INSERT
 			local.dec = gateway().insertBean(name());
-			for(local.col in config().columns()){
-				if(!structKeyExists(local.col, "pk") OR !local.col.pk){
-					local.dec.set(local.col.name, get(local.col.name));
-				}
-			}
+			setBeanDeclarationParamters(local.dec, "insert");
 
 			// TODO: special columns
 
@@ -145,13 +134,48 @@ component accessors="true"{
 			setID(local.id);
 		}
 
-		// TODO: check for many-to-many data
+		// check for many-to-many data
 		saveLinkedData();
 		
-		
-
 		return true;
 	}
+
+	/**
+	* @hint save our bean to the database
+	*/
+	public void function setBeanDeclarationParamters(any dec, string type=""){
+		for(local.col in config().columns()){
+			if(!structKeyExists(local.col, "pk") OR !local.col.pk){
+
+				// check for 'special' column
+				local.addCol = true;
+				local.colVal = get(local.col.name);
+
+				if(config().isSpecialColumn(local.col.name)){
+					local.special = config().getSpecialColumn(local.col.name);
+					if(structKeyExists(local.special, arguments.type)){
+						local.instruction = local.special[arguments.type];
+						if(!local.instruction){
+							local.addCol = false;
+						}
+					}
+					if(structKeyExists(local.special, arguments.type & "Value")){
+						local.specialVal = local.special[arguments.type & "Value"];
+						if(isCustomFunction(local.specialVal)){
+							local.colVal = local.specialVal(this);
+						}else{
+							local.colVal = local.specialVal;
+						}
+					}
+				}
+
+				if(local.addCol){
+					arguments.dec.set(local.col.name, local.colVal);
+				}
+			}
+		}
+	}
+
 
 	/**
 	* @hint deletes our bean from the database

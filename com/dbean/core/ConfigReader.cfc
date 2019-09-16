@@ -182,6 +182,15 @@ component{
 				variables._config.colHash[local.joinCol] = "JOIN";
 			}
 		}
+
+		variables._config.specialColHash = {};
+		if(!structKeyExists(variables._config, "specialColumns")){
+			variables._config.specialColumns = [];
+		}
+		for(local.specialCol in variables._config.specialColumns){
+			variables._config.specialColHash[local.specialCol.column] = local.specialCol;
+		}
+		
 	}
 
 	/**
@@ -286,6 +295,21 @@ component{
 	public boolean function isColumnDefined(string colName){
 		return structKeyExists(variables._config.colHash, arguments.colName);
 	}
+
+	/**
+	* @hint returns true if a given column name is a 'special' column
+	*/
+	public boolean function isSpecialColumn(string colName){
+		return structKeyExists(variables._config.specialColHash, arguments.colName);
+	}
+
+	/**
+	* @hint return a special column
+	*/
+	public any function getSpecialColumn(string colName){
+		return variables._config.specialColHash[arguments.colName];
+	}
+	
 
 	/**
 	* @hint returns the column name of our primary key
