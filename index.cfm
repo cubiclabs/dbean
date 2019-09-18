@@ -35,6 +35,7 @@
 	//.select("test_id, name, startDate")
 	//.where("bool = :bool")
 	//.withParam("bool", 1)
+	.limit(3, 0, true)
 	.orderBy("startDate ASC")
 	.get()#">
 

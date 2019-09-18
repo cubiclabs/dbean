@@ -78,10 +78,8 @@ component{
 					if(len(local.declaration.orderBy)){
 						writeOutput(" ORDER BY #local.declaration.orderBy#");
 					}
-					if(local.declaration.offset GT 0){
-						writeOutput(SQLOffset(local.declaration.offset));
-					}
 					if(local.declaration.limit GT 0){
+						writeOutput(SQLOffset(local.declaration.offset));
 						writeOutput(SQLLimit(local.declaration.limit));
 					}
 				}
