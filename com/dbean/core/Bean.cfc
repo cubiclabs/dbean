@@ -104,32 +104,30 @@ component accessors="true"{
 	*/
 	public boolean function save(){
 
-		if(getID()){
-			// UPDATE
-			local.dec = gateway().updateBean(name());
-			setBeanDeclarationParamters(local.dec, "update");
+		transaction{
+			if(getID()){
+				// UPDATE
+				local.dec = gateway().updateBean(name());
+				setBeanDeclarationParamters(local.dec, "update");
 
-			// TODO: special columns
+				local.dec.where(PK() & "= :pk")
+					.withParam("pk", getID())
+					.go();
 
-			local.dec.where(PK() & "= :pk")
-				.withParam("pk", getID())
-				.go();
+			}else{
+				// INSERT
+				local.dec = gateway().insertBean(name());
+				setBeanDeclarationParamters(local.dec, "insert");
 
-		}else{
-			// INSERT
-			local.dec = gateway().insertBean(name());
-			setBeanDeclarationParamters(local.dec, "insert");
+				local.result = local.dec.go();
+				local.id = gateway().getInsertID(local.result);
+				setID(local.id);
+			}
 
-			// TODO: special columns
-
-			local.result = local.dec.go();
-			local.id = gateway().getInsertID(local.result);
-			setID(local.id);
+			// check for many-to-many data
+			saveLinkedData();
 		}
 
-		// check for many-to-many data
-		saveLinkedData();
-		
 		return true;
 	}
 
@@ -175,13 +173,19 @@ component accessors="true"{
 	*/
 	public boolean function delete(){
 		if(getID()){
-			gateway().deleteBean(name())
-				.where(PK() & "= :pk")
-				.withParam("pk", getID())
-				.go();
+			transaction{
 
-			// TODO: check for many-to-many data
+				// check for many-to-many data
+				clearAllLinked();
 
+				// delete our bean
+				gateway().deleteBean(name())
+					.where(PK() & "= :pk")
+					.withParam("pk", getID())
+					.go();
+	
+			}
+			
 			return true;
 		}else{
 			return false;
@@ -282,6 +286,37 @@ component accessors="true"{
 		}
 		return local.root;
 	}
+
+	/**
+	* @hint deletes all many-to-many linked data for a given bean
+	*/
+	public void function clearAllLinked(){
+		local.manyToMany = config().manyToMany();
+
+		transaction{
+			for(local.linkedConfig in local.manyToMany){
+				// query parameters
+				local.params = {
+					FK1: {
+						value: getID(),
+						cfsqltype: config().getConfig().pk.cfSQLDataType
+					}
+				}
+
+				if(!structKeyExists(local.linkedConfig, "FK1")){
+					local.FK1 = replaceNoCase(PK(), "_id", "ID");
+				}else{
+					local.FK1 = local.linkedConfig.FK1;
+				}
+
+				gateway().delete(local.linkedConfig.intermediary)
+					.where("#local.FK1# = :FK1")
+					.withParams(local.params)
+					.go();
+			}
+		}
+	}
+	
 
 	/**
 	* @hint returns linked data

@@ -19,11 +19,16 @@
 <cfdump var="#bean.snapshot()#">
 
 <cfset bean.setName("Test Name")>
+<cfset bean.setDec(23.24)>
+<cfset bean.setNotes("This is a test note")>
 
+<cfset bean.setLinked("categories", [1,4])>
+
+
+<cfset bean.save()>
 <cfdump var="#bean.snapshot()#">
-<!--- <cfset bean.save()> --->
-
-
+<cfdump var="#bean.getLinked("categories")#">
+<cfset db.delete(bean)>
 
 <cfdump var="#db.gateway()
 	.fromBean("test")
