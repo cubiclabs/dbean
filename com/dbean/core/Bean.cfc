@@ -1,11 +1,11 @@
 component accessors="true"{
 
-	variables.instance = {};
-	variables.instancePrev = {};
-	variables.isDirty = false;
-	variables.service = "";
-	variables.linkedData = {}; // used to hold additional data associated with the bean
-	variables.linkedSaveData = {}; // contains many-to-many updates to be saved
+	variables._config = "";
+	variables._instance = {};
+	variables._instancePrev = {};
+	variables._isDirty = false;
+	variables._linkedData = {}; // used to hold additional data associated with the bean
+	variables._linkedSaveData = {}; // contains many-to-many updates to be saved
 	
 
 	/**
@@ -36,17 +36,10 @@ component accessors="true"{
 	*/
 	public struct function snapShot(boolean isPrev=false){
 		if(arguments.isPrev){
-			return duplicate(variables.instancePrev);
+			return duplicate(variables._instancePrev);
 		}else{
-			return duplicate(variables.instance);
+			return duplicate(variables._instance);
 		}
-	}
-
-	/**
-	* @hint returns our bean definition
-	*/
-	public string function ___definition(){
-		return variables.definition;
 	}
 
 	/**
@@ -74,14 +67,14 @@ component accessors="true"{
 	* @hint returns beans ID using our primary key value
 	*/
 	public string function getID(){
-		return variables.instance[PK()];
+		return variables._instance[PK()];
 	}
 	
 	/**
 	* @hint sets our beans ID for our primary key column
 	*/
 	public string function setID(any id){
-		return variables.instance[PK()] = arguments.id;
+		return variables._instance[PK()] = arguments.id;
 		setDirty();
 	}
 
@@ -89,21 +82,21 @@ component accessors="true"{
 	* @hint returns true if instance data has changed since it was populated
 	*/
 	public boolean function isDirty(){
-		return variables.isDirty;
+		return variables._isDirty;
 	}
 
 	/**
 	* @hint clears our dirty flag
 	*/
 	public void function clearDirty(){
-		variables.isDirty = false;
+		variables._isDirty = false;
 	}
 
 	/**
 	* @hint sets our dirty flag
 	*/
 	public void function setDirty(){
-		variables.isDirty = true;
+		variables._isDirty = true;
 	}
 	
 	/**
@@ -201,9 +194,9 @@ component accessors="true"{
 	*/
 	public any function get(string key, boolean isPrev=false){
 		
-		local.variableName = "instance";
+		local.variableName = "_instance";
 		if(arguments.isPrev){
-			local.variableName = "instancePrev";
+			local.variableName = "_instancePrev";
 		}
 
 		if(structKeyExists(variables[local.variableName], arguments.key)){
@@ -219,7 +212,7 @@ component accessors="true"{
 	public void function set(string key, any value){
 		
 		if(config().isColumnDefined(arguments.key)){
-			variables.instance[arguments.key] = arguments.value;
+			variables._instance[arguments.key] = arguments.value;
 			setDirty();
 		}else{
 			//throw(message="Key name '#arguments.key#' is not defined in this instance", type="DB Bean");
@@ -263,7 +256,7 @@ component accessors="true"{
 			}
 		}
 		if(!arguments.dirty){
-			variables.instancePrev = duplicate(variables.instance);
+			variables._instancePrev = duplicate(variables._instance);
 			clearDirty();
 			clearLinkedSaveData();
 			clearLinkedData();
@@ -274,8 +267,8 @@ component accessors="true"{
 	* @hint clears a bean and resets to defaul values
 	*/
 	public void function reset(){
-		variables.instance = {};
-		variables.instancePrev = {};
+		variables._instance = {};
+		variables._instancePrev = {};
 		pop(data:config().buildInstance(), dirty:false);
 	}
 
@@ -400,7 +393,7 @@ component accessors="true"{
 	* @hint returns true if a linked data key exists
 	*/
 	public any function isLinkedDataDefined(string key=""){
-		return structKeyExists(variables.linkedData, arguments.key);
+		return structKeyExists(variables._linkedData, arguments.key);
 	}
 
 	/**
@@ -408,10 +401,10 @@ component accessors="true"{
 	*/
 	public any function getLinkedData(string key=""){
 		if(!len(arguments.key)){
-			return variables.linkedData;
+			return variables._linkedData;
 		}
 		if(isLinkedDataDefined(arguments.key)){
-			return variables.linkedData[arguments.key];
+			return variables._linkedData[arguments.key];
 		}
 		return false;
 	}
@@ -420,7 +413,7 @@ component accessors="true"{
 	* @hint sets a value for a linked data key
 	*/
 	public void function setLinkedData(string key, any value){
-		variables.linkedData[arguments.key] = arguments.value;
+		variables._linkedData[arguments.key] = arguments.value;
 	}
 
 	/**
@@ -428,9 +421,9 @@ component accessors="true"{
 	*/
 	public void function clearLinkedData(string key=""){
 		if(!len(arguments.key)){
-			variables.linkedData = {};
+			variables._linkedData = {};
 		}else{
-			structDelete(variables.linkedData, arguments.key);
+			structDelete(variables._linkedData, arguments.key);
 		}
 	}
 
@@ -439,10 +432,10 @@ component accessors="true"{
 	*/
 	public any function getLinkedSaveData(string key=""){
 		if(!len(arguments.key)){
-			return variables.linkedSaveData;
+			return variables._linkedSaveData;
 		}
-		if(structKeyExists(variables.linkedSaveData, arguments.key)){
-			return variables.linkedSaveData[arguments.key];
+		if(structKeyExists(variables._linkedSaveData, arguments.key)){
+			return variables._linkedSaveData[arguments.key];
 		}
 		return false;
 	}
@@ -451,7 +444,7 @@ component accessors="true"{
 	* @hint sets a value for a linked save data key
 	*/
 	public void function setLinked(string manyToManyName, any value){
-		variables.linkedSaveData[arguments.manyToManyName] = arguments.value;
+		variables._linkedSaveData[arguments.manyToManyName] = arguments.value;
 	}
 
 	/**
@@ -459,9 +452,9 @@ component accessors="true"{
 	*/
 	public void function clearLinkedSaveData(string key=""){
 		if(!len(arguments.key)){
-			variables.linkedSaveData = {};
+			variables._linkedSaveData = {};
 		}else{
-			structDelete(variables.linkedSaveData, arguments.key);
+			structDelete(variables._linkedSaveData, arguments.key);
 		}
 	}
 

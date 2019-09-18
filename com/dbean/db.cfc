@@ -67,17 +67,18 @@ component{
 
 
 	/**
-	* @hint parses a model string to split into the model name and its namespace
+	* @hint parses a beanName string to split into the bean name and its schema
 	*/
-	public struct function parseModelNamespace(string model){
-		local.model = {
-			name: listFirst(arguments.model, "@"),
-			namespace: "model"
+	public struct function parseBeanName(string beanName){
+		local.ret = {
+			schema: "default",
+			beanName: arguments.beanName
 		}
-		if(listLen(arguments.model, "@") GT 1){
-			local.model.namespace = listLast(arguments.model, "@");
+		if(listLen(arguments.beanName, ".") GT 1){
+			local.ret.schema = listFirst(arguments.beanName, ".");
+			local.ret.beanName = listLast(arguments.beanName, ".");
 		}
-		return local.model;
+		return local.ret;
 	}
 
 
@@ -114,16 +115,12 @@ component{
 	* @hint returns a bean object
 	*/
 	public any function bean(string beanName, any pkValue=0){
-		local.schema = "default";
-		if(listlen(arguments.beanName, ".") EQ 2){
-			local.schema = listFirst(arguments.beanName, ".");
-			arguments.beanName = listLast(arguments.beanName, ".");
-		}
-		local.beanConfig = getBeanConfig(arguments.beanName, local.schema);
+		local.beanInfo = parseBeanName(arguments.beanName);
+		local.beanConfig = getBeanConfig(local.beanInfo.beanName, local.beanInfo.schema);
 		local.bean = new core.Bean(local.beanConfig);
 		
 		if(arguments.pkValue NEQ 0){
-			local.qData = gateway(local.schema).getBean(arguments.beanName, arguments.pkValue);
+			local.qData = gateway(local.beanInfo.schema).getBean(local.beanInfo.beanName, arguments.pkValue);
 			if(local.qData.recordCount){
 				local.bean.pop(local.qData);
 			}
@@ -266,10 +263,6 @@ component{
 			throw("Unmatched schema for '#arguments.beanName#'. '#local.beanConfig.schema()#' does not match '#arguments.schema#'", "dbean.db");
 		}
 	}
-
-
-	// Gateway
-	// ======================================================
 
 
 }

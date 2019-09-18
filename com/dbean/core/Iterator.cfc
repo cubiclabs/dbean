@@ -33,19 +33,16 @@ component{
 		numeric limitOffset=0,
 		boolean withTotal=false,
 		any data){
+		
 		variables._db = arguments.dbObject;
 
-		local.schema = "default";
-		if(listLen(arguments.beanName, ".") EQ 2){
-			local.schema = listFirst(arguments.beanName, ".");
-			arguments.beanName = listLast(arguments.beanName, ".");
-		}
-
+		local.beanInfo = db().parseBeanName(arguments.beanName);
+		
 		if(structKeyExists(arguments, "data")){
 			variables._qData = arguments.data;
 		}else{
-			local.dec = db().gateway(local.schema)
-				.fromBean(arguments.beanName)
+			local.dec = db().gateway(local.beanInfo.schema)
+				.fromBean(local.beanInfo.beanName)
 				.where(arguments.where)
 				.orderBy(arguments.orderBy);
 
