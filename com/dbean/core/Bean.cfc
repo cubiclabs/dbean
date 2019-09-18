@@ -141,7 +141,7 @@ component accessors="true"{
 	}
 
 	/**
-	* @hint save our bean to the database
+	* @hint set query declaration parameters, checking for special columns as we go
 	*/
 	public void function setBeanDeclarationParamters(any dec, string type=""){
 		for(local.col in config().columns()){

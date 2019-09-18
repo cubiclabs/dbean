@@ -132,17 +132,17 @@ component{
 	}
 
 	/**
-	* @hint proxy for our service save method
+	* @hint proxy for our bean save method
 	*/
-	public any function save(any bean){
-		return service(arguments.bean.rootName()).save(arguments.bean);
+	public boolean function save(any bean){
+		return arguments.bean.save();
 	}
 
 	/**
-	* @hint proxy for our service delete method
+	* @hint proxy for our bean delete method
 	*/
-	public any function delete(any bean){
-		return service(arguments.bean.rootName()).delete(arguments.bean);	
+	public boolean function delete(any bean){
+		return arguments.bean.delete();	
 	}
 
 	
