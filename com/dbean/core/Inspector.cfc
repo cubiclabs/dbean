@@ -75,8 +75,9 @@ component{
 				"name": local.col.column_name,
 				"type": listFirst(local.col.type_name, " "),
 				"size": local.col.column_size,
-				"isNullable": local.col.nullable,
-				"cfSQLDataType": getCFSQLDataType(local.col.type_name),
+				"isNullable": local.col.nullable ? true : false,
+				"isAuctoIncrement": local.col.is_autoincrement ? true : false,
+				"cfSQLDataType": getCFSQLDataType(local.col.type_name, local.col.column_size),
 				"cfDataType": getCFDataType(local.col.type_name),
 				"default": getDefaultForDataType(getCFDataType(local.col.type_name))
 			};
@@ -287,7 +288,7 @@ component{
 	/**
 	* @hint returns the mapped CFSQLDatatype for a given column data type
 	*/
-	public string function getCFSQLDataType(string datatype){
+	public string function getCFSQLDataType(string datatype, numeric size){
 
 		arguments.datatype = listFirst(arguments.datatype, " ");
 
@@ -299,6 +300,9 @@ component{
 			case "bit":
 				return "cf_sql_bit";
 			case "char":
+				if(arguments.size > 800){
+					return "cf_sql_clob";
+				}
 				return "cf_sql_char";
 			case "datetime":
 				return "cf_sql_timestamp";
@@ -313,12 +317,18 @@ component{
 			case "money":
 				return "cf_sql_money";
 			case "nchar":
+				if(arguments.size > 800){
+					return "cf_sql_clob";
+				}
 				return "cf_sql_char";
 			case "ntext": case "longchar":
 				return "cf_sql_clob";
 			case "numeric":
 				return "cf_sql_varchar";
 			case "nvarchar": case "guid":
+				if(arguments.size > 800){
+					return "cf_sql_clob";
+				}
 				return "cf_sql_varchar";
 			case "real":
 				return "cf_sql_real";
@@ -341,6 +351,9 @@ component{
 			case "varbinary":
 				return "cf_sql_varbinary";
 			case "varchar":
+				if(arguments.size > 800){
+					return "cf_sql_clob";
+				}
 				return "cf_sql_varchar";
 			case "xml":
 				return "cf_sql_clob";

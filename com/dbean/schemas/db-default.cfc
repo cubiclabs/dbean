@@ -12,8 +12,9 @@ component{
 				cols:[
 					{
 						default:0,
+						isAuctoIncrement:true,
 						size:10,
-						isNullable:0,
+						isNullable:false,
 						name:"relation_id",
 						cfDataType:"numeric",
 						type:"int",
@@ -22,8 +23,9 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:50,
-						isNullable:1,
+						isNullable:true,
 						name:"relationName",
 						cfDataType:"string",
 						type:"nvarchar",
@@ -31,12 +33,13 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:2147483647,
-						isNullable:1,
+						isNullable:true,
 						name:"relationBody",
 						cfDataType:"string",
 						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						cfSQLDataType:"cf_sql_clob"
 					}
 				]
 			},
@@ -46,8 +49,9 @@ component{
 				cols:[
 					{
 						default:0,
+						isAuctoIncrement:true,
 						size:10,
-						isNullable:0,
+						isNullable:false,
 						name:"test_id",
 						cfDataType:"numeric",
 						type:"int",
@@ -56,8 +60,9 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:50,
-						isNullable:1,
+						isNullable:true,
 						name:"name",
 						cfDataType:"string",
 						type:"nvarchar",
@@ -65,8 +70,9 @@ component{
 					},
 					{
 						default:false,
+						isAuctoIncrement:false,
 						size:1,
-						isNullable:1,
+						isNullable:true,
 						name:"bool",
 						cfDataType:"boolean",
 						type:"bit",
@@ -74,9 +80,10 @@ component{
 					},
 					{
 						default:now(),
+						isAuctoIncrement:false,
 						scale:3,
 						size:23,
-						isNullable:1,
+						isNullable:true,
 						name:"startDate",
 						cfDataType:"date",
 						type:"datetime",
@@ -84,17 +91,19 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:2147483647,
-						isNullable:1,
+						isNullable:true,
 						name:"notes",
 						cfDataType:"string",
 						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						cfSQLDataType:"cf_sql_clob"
 					},
 					{
 						default:0,
+						isAuctoIncrement:false,
 						size:10,
-						isNullable:1,
+						isNullable:true,
 						name:"relationID",
 						cfDataType:"numeric",
 						type:"int",
@@ -102,9 +111,10 @@ component{
 					},
 					{
 						default:0,
+						isAuctoIncrement:false,
 						scale:2,
 						size:10,
-						isNullable:1,
+						isNullable:true,
 						name:"dec",
 						cfDataType:"numeric",
 						type:"decimal",
@@ -118,8 +128,9 @@ component{
 				cols:[
 					{
 						default:0,
+						isAuctoIncrement:false,
 						size:10,
-						isNullable:1,
+						isNullable:true,
 						name:"testID",
 						cfDataType:"numeric",
 						type:"int",
@@ -127,8 +138,9 @@ component{
 					},
 					{
 						default:0,
+						isAuctoIncrement:false,
 						size:10,
-						isNullable:1,
+						isNullable:true,
 						name:"categoryID",
 						cfDataType:"numeric",
 						type:"int",
@@ -142,8 +154,9 @@ component{
 				cols:[
 					{
 						default:0,
+						isAuctoIncrement:true,
 						size:10,
-						isNullable:0,
+						isNullable:false,
 						name:"category_id",
 						cfDataType:"numeric",
 						type:"int",
@@ -152,8 +165,9 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:50,
-						isNullable:1,
+						isNullable:true,
 						name:"categoryTitle",
 						cfDataType:"string",
 						type:"nvarchar",
@@ -161,8 +175,9 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:50,
-						isNullable:1,
+						isNullable:true,
 						name:"categoryAlias",
 						cfDataType:"string",
 						type:"nvarchar",
@@ -170,8 +185,9 @@ component{
 					},
 					{
 						default:"",
+						isAuctoIncrement:false,
 						size:200,
-						isNullable:1,
+						isNullable:true,
 						name:"categoryValue",
 						cfDataType:"string",
 						type:"nvarchar",
@@ -179,8 +195,9 @@ component{
 					},
 					{
 						default:0,
+						isAuctoIncrement:false,
 						size:10,
-						isNullable:1,
+						isNullable:true,
 						name:"categoryOrderKey",
 						cfDataType:"numeric",
 						type:"int",

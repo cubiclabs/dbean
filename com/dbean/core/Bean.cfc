@@ -1,4 +1,4 @@
-component accessors="true"{
+component{
 
 	variables._config = "";
 	variables._instance = {};
@@ -162,6 +162,12 @@ component accessors="true"{
 
 				if(local.addCol){
 					arguments.dec.set(local.col.name, local.colVal);
+				}
+			}else{
+				// primary key
+				if(!local.col.isAuctoIncrement){
+					// does not auto increment, so we set this value
+					arguments.dec.set(local.col.name, getID());
 				}
 			}
 		}
