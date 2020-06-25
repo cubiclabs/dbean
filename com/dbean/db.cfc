@@ -187,6 +187,13 @@ component{
 		}
 	}
 
+	/**
+	* @hint rebuilds a schema and flushes our bean cache
+	*/
+	public void function flushSchema(string schemaName="default"){
+		getSchema(arguments.schemaName, true);
+		variables._beanConfigs[arguments.schemaName] = {};
+	}
 
 	/**
 	* @hint returns a application defined datasources
