@@ -200,10 +200,21 @@ component{
 		local.inst = {};
 		for(local.col in variables._config.cols){
 			local.inst[local.col.name] = local.col.default;
+
 			// check for default date value
 			if(isDate(local.col.default) AND local.col.cfDataType IS "date"){
 				local.inst[local.col.name] = now();
 			}
+
+			// check for a custom default value
+			if(structKeyExists(variables._config.specialColHash, local.col.name)
+				AND structKeyExists(variables._config.specialColHash[local.col.name], "default")){
+
+				local.inst[local.col.name] = variables._config.specialColHash[local.col.name]["default"];
+
+			}
+
+			
 		}
 		for(local.joinCol in variables._config.joinCols){
 			local.inst[local.joinCol] = "";

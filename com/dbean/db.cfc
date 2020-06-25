@@ -40,6 +40,9 @@ component{
 	*/
 	public string function getDotPath(string path){
 		local.rootPath = expandPath("/");
+		if(!arguments.path CONTAINS ":"){
+			arguments.path = expandPath(arguments.path);
+		}
 		local.relativePath = replaceNoCase(arguments.path, local.rootPath, "");
 		local.relativePath = replaceNoCase(local.relativePath, "\", "/", "ALL");
 		local.relativePath = replaceNoCase(local.relativePath, "//", "/", "ALL");
@@ -233,7 +236,11 @@ component{
 	* @hint returns the absolute path to a schema config file
 	*/
 	public string function getSchemaAbsolutePath(string schemaName="default"){
-		return getSetting("schemaPath") & "db-" & arguments.schemaName & ".cfc";
+		local.schemaPath = getSetting("schemaPath");
+		if(!local.schemaPath CONTAINS ":"){
+			local.schemaPath = expandPath(local.schemaPath);
+		}
+		return local.schemaPath & "db-" & arguments.schemaName & ".cfc";
 	}
 
 	/**
