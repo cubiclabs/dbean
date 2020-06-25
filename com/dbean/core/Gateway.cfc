@@ -186,7 +186,7 @@ component{
 
 		var dsl = {
 			set: function(string col, any value, any param=""){
-				arrayAppend(declaration.q.cols, {
+				arrayAppend(declaration.q["cols"], {
 					name: arguments.col,
 					value: arguments.value
 				});
@@ -267,7 +267,7 @@ component{
 
 		var dsl = {
 			set: function(string col, any value, any param=""){
-				arrayAppend(declaration.q.cols, {
+				arrayAppend(declaration.q["cols"], {
 					name: arguments.col,
 					value: arguments.value
 				});
@@ -374,8 +374,8 @@ component{
 		local.sql = SQLWriter().toSQL(arguments.declaration);
 		local.beanConfig = "";
 		if(structKeyExists(arguments.declaration.q, "beanConfig")) local.beanConfig = arguments.declaration.q.beanConfig;
-		local.q = runQuery(local.sql, arguments.declaration.q.params, arguments.declaration.q.options, local.beanConfig);
-		return local.q;
+		return runQuery(local.sql, arguments.declaration.q.params, arguments.declaration.q.options, local.beanConfig);
+		//return local.q;
 	}
 
 	/**
