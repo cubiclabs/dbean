@@ -158,11 +158,11 @@ component{
 	/**
 	* @hint returns a database schema for a given schema alias name
 	*/
-	public any function getSchema(string schemaName="default"){
-		if(structKeyExists(variables._schemas, arguments.schemaName)){
+	public any function getSchema(string schemaName="default", boolean rebuild=false){
+		if(!arguments.rebuild && structKeyExists(variables._schemas, arguments.schemaName)){
 			return variables._schemas[arguments.schemaName];
 		}else{
-			if(readSchema(arguments.schemaName)){
+			if(!arguments.rebuild && readSchema(arguments.schemaName)){
 				return variables._schemas[arguments.schemaName];
 			}else{
 				// attempt to build our schema
@@ -186,6 +186,7 @@ component{
 			}
 		}
 	}
+
 
 	/**
 	* @hint returns a application defined datasources

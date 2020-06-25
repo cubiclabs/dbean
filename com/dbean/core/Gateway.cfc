@@ -97,7 +97,7 @@ component{
 			}
 		};
 
-		structAppend(declaration, {
+		var dsl = {
 			select: function(string cols){
 				declaration.q.cols = arguments.cols;
 				return declaration;
@@ -144,7 +144,9 @@ component{
 				}
 				return execute(declaration);
 			}
-		});
+		};
+
+		structAppend(declaration, dsl);
 
 		return declaration;
 	}
@@ -335,7 +337,7 @@ component{
 			}
 		};
 
-		structAppend(declaration, {
+		var dsl = {
 			where: function(string whereClause){
 				declaration.q.where = arguments.whereClause;
 				return declaration;
@@ -357,8 +359,10 @@ component{
 				structAppend(declaration.q.options, arguments.options);
 				return execute(declaration);
 			}
-		});
+		};
 
+		structAppend(declaration, dsl);
+		
 		return declaration;
 	}
 
