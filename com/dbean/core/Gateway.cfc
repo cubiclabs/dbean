@@ -182,7 +182,7 @@ component{
 			}
 		};
 
-		structAppend(declaration, {
+		var dsl = {
 			set: function(string col, any value, any param=""){
 				arrayAppend(declaration.q.cols, {
 					name: arguments.col,
@@ -207,7 +207,7 @@ component{
 					declaration.q.params[arguments.col] = {
 						value: arguments.value,
 						null: local.null
-					}
+					};
 				}
 				return declaration;
 			},
@@ -223,8 +223,9 @@ component{
 			go: function(){
 				return execute(declaration);
 			}
+		};
 
-		});
+		structAppend(declaration, dsl);
 
 		return declaration;
 	}
@@ -233,7 +234,7 @@ component{
 	* @hint INSERT query syntax DSL for a given bean name
 	*/
 	public struct function insertBean(string beanName){
-		return this.insert(arguments.beanName, true)
+		return this.insert(arguments.beanName, true);
 	}
 
 	/**
@@ -262,7 +263,7 @@ component{
 			}
 		};
 
-		structAppend(declaration, {
+		var dsl = {
 			set: function(string col, any value, any param=""){
 				arrayAppend(declaration.q.cols, {
 					name: arguments.col,
@@ -287,15 +288,16 @@ component{
 					declaration.q.params[arguments.col] = {
 						value: arguments.value,
 						null: local.null
-					}
+					};
 				}
 				return declaration;
 			},
 			go: function(){
 				return execute(declaration);
 			}
+		};
 
-		});
+		structAppend(declaration, dsl);
 
 		return declaration;
 	}
@@ -305,7 +307,7 @@ component{
 	* @hint DELETE query syntax DSL for a given bean name
 	*/
 	public struct function deleteBean(string beanName){
-		return delete(arguments.beanName, true)
+		return delete(arguments.beanName, true);
 	}
 
 	/**

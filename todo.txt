@@ -1,5 +1,0 @@
-
-* Special columns, ability to prevent insert or udpate for columns or specify a specific value
-	Can this work with closures???
-
-* Delete Cleanup many-to-many data

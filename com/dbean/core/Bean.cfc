@@ -74,7 +74,7 @@ component{
 	* @hint sets our beans ID for our primary key column
 	*/
 	public string function setID(any id){
-		return variables._instance[PK()] = arguments.id;
+		variables._instance[PK()] = arguments.id;
 		setDirty();
 	}
 
@@ -307,7 +307,7 @@ component{
 						value: getID(),
 						cfsqltype: config().getConfig().pk.cfSQLDataType
 					}
-				}
+				};
 
 				if(!structKeyExists(local.linkedConfig, "FK1")){
 					local.FK1 = replaceNoCase(PK(), "_id", "ID");
@@ -346,7 +346,7 @@ component{
 				value: getID(),
 				cfsqltype: config().getConfig().pk.cfSQLDataType
 			}
-		}
+		};
 
 		if(!structKeyExists(local.linkedConfig, "FK1")){
 			local.linkedConfig.FK1 = replaceNoCase(PK(), "_id", "ID");
@@ -407,7 +407,7 @@ component{
 						value: getID(),
 						cfsqltype: config().getConfig().pk.cfSQLDataType
 					}
-				}
+				};
 
 				local.sqlDELETE = "DELETE FROM #local.linkedConfig.intermediary# 
 					WHERE #local.linkedConfig.FK1# = :FK1 ;";
@@ -421,7 +421,7 @@ component{
 						value: arrayToList(local.linkedData),
 						cfsqltype: local.relatedModel.getConfig().pk.cfSQLDataType,
 						list: true
-					}
+					};
 				}
 
 				gateway().runQuery(local.sqlDELETE & chr(13) & chr(10) & local.sqlINSERT, local.params);

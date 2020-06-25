@@ -11,35 +11,35 @@ component{
 				pk:"relation_id",
 				cols:[
 					{
-						default:0,
-						isAuctoIncrement:true,
-						size:10,
-						isNullable:false,
-						name:"relation_id",
-						cfDataType:"numeric",
-						type:"int",
-						pk:true,
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":true,
+						"size":10,
+						"isNullable":false,
+						"name":"relation_id",
+						"cfDataType":"numeric",
+						"type":"int",
+						"pk":true,
+						"cfSQLDataType":"cf_sql_integer"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:50,
-						isNullable:true,
-						name:"relationName",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":50,
+						"isNullable":true,
+						"name":"relationName",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_varchar"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:2147483647,
-						isNullable:true,
-						name:"relationBody",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_clob"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":2147483647,
+						"isNullable":true,
+						"name":"relationBody",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_clob"
 					}
 				]
 			},
@@ -48,77 +48,77 @@ component{
 				pk:"test_id",
 				cols:[
 					{
-						default:0,
-						isAuctoIncrement:true,
-						size:10,
-						isNullable:false,
-						name:"test_id",
-						cfDataType:"numeric",
-						type:"int",
-						pk:true,
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":true,
+						"size":10,
+						"isNullable":false,
+						"name":"test_id",
+						"cfDataType":"numeric",
+						"type":"int",
+						"pk":true,
+						"cfSQLDataType":"cf_sql_integer"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:50,
-						isNullable:true,
-						name:"name",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":50,
+						"isNullable":true,
+						"name":"name",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_varchar"
 					},
 					{
-						default:false,
-						isAuctoIncrement:false,
-						size:1,
-						isNullable:true,
-						name:"bool",
-						cfDataType:"boolean",
-						type:"bit",
-						cfSQLDataType:"cf_sql_bit"
+						"default":false,
+						"isAuctoIncrement":false,
+						"size":1,
+						"isNullable":true,
+						"name":"bool",
+						"cfDataType":"boolean",
+						"type":"bit",
+						"cfSQLDataType":"cf_sql_bit"
 					},
 					{
-						default:now(),
-						isAuctoIncrement:false,
-						scale:3,
-						size:23,
-						isNullable:true,
-						name:"startDate",
-						cfDataType:"date",
-						type:"datetime",
-						cfSQLDataType:"cf_sql_timestamp"
+						"default":now(),
+						"isAuctoIncrement":false,
+						"scale":3,
+						"size":23,
+						"isNullable":true,
+						"name":"startDate",
+						"cfDataType":"date",
+						"type":"datetime",
+						"cfSQLDataType":"cf_sql_timestamp"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:2147483647,
-						isNullable:true,
-						name:"notes",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_clob"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":2147483647,
+						"isNullable":true,
+						"name":"notes",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_clob"
 					},
 					{
-						default:0,
-						isAuctoIncrement:false,
-						size:10,
-						isNullable:true,
-						name:"relationID",
-						cfDataType:"numeric",
-						type:"int",
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":false,
+						"size":10,
+						"isNullable":true,
+						"name":"relationID",
+						"cfDataType":"numeric",
+						"type":"int",
+						"cfSQLDataType":"cf_sql_integer"
 					},
 					{
-						default:0,
-						isAuctoIncrement:false,
-						scale:2,
-						size:10,
-						isNullable:true,
-						name:"dec",
-						cfDataType:"numeric",
-						type:"decimal",
-						cfSQLDataType:"cf_sql_decimal"
+						"default":0,
+						"isAuctoIncrement":false,
+						"scale":2,
+						"size":10,
+						"isNullable":true,
+						"name":"dec",
+						"cfDataType":"numeric",
+						"type":"decimal",
+						"cfSQLDataType":"cf_sql_decimal"
 					}
 				]
 			},
@@ -127,24 +127,24 @@ component{
 				pk:"",
 				cols:[
 					{
-						default:0,
-						isAuctoIncrement:false,
-						size:10,
-						isNullable:true,
-						name:"testID",
-						cfDataType:"numeric",
-						type:"int",
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":false,
+						"size":10,
+						"isNullable":true,
+						"name":"testID",
+						"cfDataType":"numeric",
+						"type":"int",
+						"cfSQLDataType":"cf_sql_integer"
 					},
 					{
-						default:0,
-						isAuctoIncrement:false,
-						size:10,
-						isNullable:true,
-						name:"categoryID",
-						cfDataType:"numeric",
-						type:"int",
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":false,
+						"size":10,
+						"isNullable":true,
+						"name":"categoryID",
+						"cfDataType":"numeric",
+						"type":"int",
+						"cfSQLDataType":"cf_sql_integer"
 					}
 				]
 			},
@@ -153,55 +153,55 @@ component{
 				pk:"category_id",
 				cols:[
 					{
-						default:0,
-						isAuctoIncrement:true,
-						size:10,
-						isNullable:false,
-						name:"category_id",
-						cfDataType:"numeric",
-						type:"int",
-						pk:true,
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":true,
+						"size":10,
+						"isNullable":false,
+						"name":"category_id",
+						"cfDataType":"numeric",
+						"type":"int",
+						"pk":true,
+						"cfSQLDataType":"cf_sql_integer"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:50,
-						isNullable:true,
-						name:"categoryTitle",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":50,
+						"isNullable":true,
+						"name":"categoryTitle",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_varchar"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:50,
-						isNullable:true,
-						name:"categoryAlias",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":50,
+						"isNullable":true,
+						"name":"categoryAlias",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_varchar"
 					},
 					{
-						default:"",
-						isAuctoIncrement:false,
-						size:200,
-						isNullable:true,
-						name:"categoryValue",
-						cfDataType:"string",
-						type:"nvarchar",
-						cfSQLDataType:"cf_sql_varchar"
+						"default":"",
+						"isAuctoIncrement":false,
+						"size":200,
+						"isNullable":true,
+						"name":"categoryValue",
+						"cfDataType":"string",
+						"type":"nvarchar",
+						"cfSQLDataType":"cf_sql_varchar"
 					},
 					{
-						default:0,
-						isAuctoIncrement:false,
-						size:10,
-						isNullable:true,
-						name:"categoryOrderKey",
-						cfDataType:"numeric",
-						type:"int",
-						cfSQLDataType:"cf_sql_integer"
+						"default":0,
+						"isAuctoIncrement":false,
+						"size":10,
+						"isNullable":true,
+						"name":"categoryOrderKey",
+						"cfDataType":"numeric",
+						"type":"int",
+						"cfSQLDataType":"cf_sql_integer"
 					}
 				]
 			}

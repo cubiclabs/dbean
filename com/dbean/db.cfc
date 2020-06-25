@@ -40,7 +40,7 @@ component{
 	*/
 	public string function getDotPath(string path){
 		local.rootPath = expandPath("/");
-		local.relativePath = replaceNoCase(expandPath(arguments.path), local.rootPath, "");
+		local.relativePath = replaceNoCase(arguments.path, local.rootPath, "");
 		local.relativePath = replaceNoCase(local.relativePath, "\", "/", "ALL");
 		local.relativePath = replaceNoCase(local.relativePath, "//", "/", "ALL");
 		local.dotPath = replaceNoCase(local.relativePath, "/", ".", "ALL");
@@ -73,7 +73,7 @@ component{
 		local.ret = {
 			schema: "default",
 			beanName: arguments.beanName
-		}
+		};
 		if(listLen(arguments.beanName, ".") GT 1){
 			local.ret.schema = listFirst(arguments.beanName, ".");
 			local.ret.beanName = listLast(arguments.beanName, ".");
@@ -164,19 +164,20 @@ component{
 			}else{
 				// attempt to build our schema
 				if(structKeyExists(getSetting("schemas"), arguments.schemaName)){
-					local.dsns = getDSNNames();
+					//local.dsns = getDSNNames();
 					local.schemaDSN = getSetting("schemas")[arguments.schemaName];
-					for(local.dsn in local.dsns){
-						if(local.dsn IS local.schemaDSN ){
-							buildSchema(local.dsn, arguments.schemaName);
+					//for(local.dsn in local.dsns){
+					//	if(local.dsn IS local.schemaDSN ){
+							//buildSchema(local.dsn, arguments.schemaName);
+							buildSchema(local.schemaDSN, arguments.schemaName);
 							if(readSchema(arguments.schemaName)){
 								return variables._schemas[arguments.schemaName];
 							}else{
 								throw("Schema '#arguments.schemaName#' could not be built", "dbean.db");
 							}
-						}
-					}
-					throw("Schema '#arguments.schemaName#' dsn not found", "dbean.db");
+					//	}
+					//}
+					//throw("Schema '#arguments.schemaName#' dsn not found", "dbean.db");
 				}
 				throw("Schema '#arguments.schemaName#' not defined", "dbean.db");
 			}
@@ -232,7 +233,7 @@ component{
 	* @hint returns the absolute path to a schema config file
 	*/
 	public string function getSchemaAbsolutePath(string schemaName="default"){
-		return expandPath(getSetting("schemaPath")) & "db-" & arguments.schemaName & ".cfc";
+		return getSetting("schemaPath") & "db-" & arguments.schemaName & ".cfc";
 	}
 
 	/**

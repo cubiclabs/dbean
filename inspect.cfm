@@ -1,7 +1,7 @@
-
+<!--- 
 <cfset insp = new com.dbean.core.Inspector()>
 
-<cfdump var="#insp.inspectDatabase("test")#">
+<cfdump var="#insp.inspectDatabase("test")#"> --->
 <cfscript>
 cfdbinfo(
 	datasource="test",

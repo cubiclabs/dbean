@@ -99,11 +99,11 @@ component{
 			local.config = {
 				definition: {
 					schema: variables._schema,
-					table: "#db().getSetting("tablePrefix")##variables._beanName#",
+					table: "#db().getSetting("tablePrefix")##variables._beanName#"
 				}
-			}
+			};
 			return local.config;
-		}catch(e){
+		}catch(any e){
 			throw("Config not found for bean '#variables._beanName#' using schema '#variables._schema#' and table not found in schema", "dbean.core.configreader");
 		}
 
@@ -286,7 +286,7 @@ component{
 	* @hint returns a config column 
 	*/
 	public struct function getColumn(string colName){
-		return variables._config.colHash[arguments.colName]
+		return variables._config.colHash[arguments.colName];
 	}
 
 	/**
@@ -316,7 +316,7 @@ component{
 	*/
 	public string function getPK(){
 		if(variables._config.hasPK){
-			return variables._config.pk.name
+			return variables._config.pk.name;
 		}
 		return "";
 	}

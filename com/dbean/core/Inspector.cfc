@@ -44,7 +44,10 @@ component{
 		};
 
 		for(local.table in local.dbInfo){
-			if(local.table.table_type IS "TABLE" AND local.table.table_schem IS NOT "sys"){
+			if(local.table.table_type IS "TABLE" 
+				AND (!listFindNoCase(local.dbInfo.columnList, "table_schem")
+					OR (local.table.table_schem IS NOT "sys")
+				)){
 				local.db.tables[local.table.table_name] = inspectTable(arguments.dsn, local.table.table_name);
 			}
 		}
@@ -69,14 +72,28 @@ component{
 			"table": arguments.tableName
 		};
 
+		local.possiblePK = [];
+
 		for(local.col in local.qTable){
+
+			local.nullable = structKeyExists(local.col, "nullable") ? local.col.nullable ? true : false
+				: structKeyExists(local.col, "is_nullable") ? local.col.is_nullable ? true : false : false;
 			
+			local.autoincrement = false;
+			if(structKeyExists(local.col, "autoincrement")){
+				local.autoincrement = local.col.is_autoincrement ? true : false;
+			}else{
+				if(local.col.type_name CONTAINS "identity"){
+					local.autoincrement = true;
+				}
+			}
+
 			local.colData = {
 				"name": local.col.column_name,
 				"type": listFirst(local.col.type_name, " "),
 				"size": local.col.column_size,
-				"isNullable": local.col.nullable ? true : false,
-				"isAuctoIncrement": local.col.is_autoincrement ? true : false,
+				"isNullable": local.nullable,
+				"isAuctoIncrement": local.autoincrement,
 				"cfSQLDataType": getCFSQLDataType(local.col.type_name, local.col.column_size),
 				"cfDataType": getCFDataType(local.col.type_name),
 				"default": getDefaultForDataType(getCFDataType(local.col.type_name))
@@ -88,9 +105,17 @@ component{
 			if(local.col.is_primaryKey){
 				local.schema.pk = local.col.column_name;
 				local.colData["pk"] = true;
+			}else if(local.colData.isAuctoIncrement){
+				arrayAppend(local.possiblePK, local.colData);
 			}
 
 			arrayAppend(local.schema.cols, local.colData);
+		}
+
+		// if we do not have a primayr key, try to find one
+		if(!len(local.schema.pk) AND arrayLen(local.possiblePK)){
+			local.schema.pk = local.possiblePK[1].name;
+			local.possiblePK[1]["pk"] = true;
 		}
 
 		return local.schema;
@@ -260,7 +285,7 @@ component{
 					if((local.key NEQ "default") AND !isBoolean(local.valueString) AND !isNumeric(local.valueString)){
 						local.valueString = """" & local.valueString & """";
 					}
-					arrayAppend(local.colLineKeys, repeatString(local.tab, 6) & local.key & ":" & local.valueString);
+					arrayAppend(local.colLineKeys, repeatString(local.tab, 6) & """" & local.key & """" & ":" & local.valueString);
 				}
 				arrayAppend(local.colLines, arrayToList(local.colLineKeys, "," & local.crlf));
 				arrayAppend(local.colLines, repeatString(local.tab, 5) & "}");
@@ -291,6 +316,7 @@ component{
 	public string function getCFSQLDataType(string datatype, numeric size){
 
 		arguments.datatype = listFirst(arguments.datatype, " ");
+		arguments.datatype = listFirst(arguments.datatype, "(");
 
 		switch(arguments.datatype){
 			case "bigint":
@@ -304,7 +330,7 @@ component{
 					return "cf_sql_clob";
 				}
 				return "cf_sql_char";
-			case "datetime":
+			case "datetime": case "datetime2":
 				return "cf_sql_timestamp";
 			case "decimal": case "double":
 				return "cf_sql_decimal";
@@ -369,6 +395,7 @@ component{
 	public string function getCFDataType(string datatype){
 
 		arguments.datatype = listFirst(arguments.datatype, " ");
+		arguments.datatype = listFirst(arguments.datatype, "(");
 
 		switch(arguments.datatype){
 			case "bigint":
@@ -379,7 +406,7 @@ component{
 				return "boolean";
 			case "char":
 				return "string";
-			case "datetime":
+			case "datetime": case "datetime2":
 				return "date";
 			case "decimal": case "double":
 				return "numeric";
