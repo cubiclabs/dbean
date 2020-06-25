@@ -207,11 +207,16 @@ component{
 			}
 
 			// check for a custom default value
-			if(structKeyExists(variables._config.specialColHash, local.col.name)
-				AND structKeyExists(variables._config.specialColHash[local.col.name], "default")){
-
-				local.inst[local.col.name] = variables._config.specialColHash[local.col.name]["default"];
-
+			if(isSpecialColumn(local.col.name)){
+				local.specialCol = getSpecialColumn(local.col.name);
+				if(structKeyExists(local.specialCol, "default")){
+					local.defaultVal = local.specialCol["default"];
+					if(isCustomFunction(local.defaultVal)){
+						local.inst[local.col.name] = local.defaultVal();
+					}else{
+						local.inst[local.col.name] = local.defaultVal;
+					}
+				}
 			}
 
 			

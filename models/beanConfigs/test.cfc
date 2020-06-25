@@ -23,9 +23,13 @@ component{
 				column: "startDate",
 				//insert: false,
 				updateValue: function(bean){
+					return dateAdd("yyyy", -10, now());
 					return now();
 				},
 				//update: false
+				default: function(){
+					return dateAdd("yyyy", -20, now());
+				}
 			}
 		]
 	}
