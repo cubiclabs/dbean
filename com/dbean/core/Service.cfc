@@ -28,11 +28,18 @@ component{
 
 
 	/**
-	* @hint returns a gateway object for our schema
+	* @hint bean helper function
 	*/
-	public any function bean(numeric pk=0, string beanName=variables._bean){
+	public any function bean(numeric pk=0, any params={}, string beanName=variables._bean){
 		local.schemaBeanName = variables._schema & "." & arguments.beanName;
-		return db().bean(local.schemaBeanName, arguments.pk);
+
+		local.args = {
+			beanName: local.schemaBeanName,
+			pkValue: arguments.pk,
+			params: arguments.params
+		};
+
+		return db().bean(argumentCollection:local.args);
 	}
 
 }

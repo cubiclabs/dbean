@@ -119,7 +119,6 @@ component{
 		local.bean = new core.Bean(local.beanConfig);
 		
 		if(arguments.pkValue NEQ 0){
-
 			local.args = {
 				beanName: local.beanInfo.beanName,
 				pkValue: arguments.pkValue,
