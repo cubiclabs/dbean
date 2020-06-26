@@ -113,13 +113,21 @@ component{
 	/**
 	* @hint returns a bean object
 	*/
-	public any function bean(string beanName, any pkValue=0){
+	public any function bean(string beanName, any pkValue=0, any params={}){
 		local.beanInfo = parseBeanName(arguments.beanName);
 		local.beanConfig = getBeanConfig(local.beanInfo.beanName, local.beanInfo.schema);
 		local.bean = new core.Bean(local.beanConfig);
 		
 		if(arguments.pkValue NEQ 0){
-			local.qData = gateway(local.beanInfo.schema).getBean(local.beanInfo.beanName, arguments.pkValue);
+
+			local.args = {
+				beanName: local.beanInfo.beanName,
+				pkValue: arguments.pkValue,
+				params: arguments.params
+			};
+			local.qData = gateway(local.beanInfo.schema)
+				.getBean(argumentCollection:local.args);
+			
 			if(local.qData.recordCount){
 				local.bean.pop(local.qData);
 			}

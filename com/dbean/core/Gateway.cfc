@@ -43,13 +43,22 @@ component{
 		return variables._SQLWriter;
 	}
 
-	public query function getBean(string beanName, any pkValue){
+	public query function getBean(string beanName, any pkValue=0, any params={}){
 		local.beanConfig = db().getBeanConfig(arguments.beanName, schemaName());
-		return fromBean(arguments.beanName)
-			.where(local.beanConfig.getPK(true) & "= :pk")
-			.withParams({
+
+		if(isNumeric(arguments.pkValue)){
+			local.where = local.beanConfig.getPK(true) & "= :pk";
+			local.params = {
 				pk: arguments.pkValue
-			})
+			};
+		}else{
+			local.where = arguments.pkValue;
+			local.params = arguments.params;
+		}
+
+		return fromBean(arguments.beanName)
+			.where(local.where)
+			.withParams(local.params)
 			.get();
 	}
 
