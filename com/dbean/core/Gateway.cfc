@@ -400,7 +400,8 @@ component{
 		try{
 			local.q = queryExecute(arguments.sql, local.params, arguments.options);
 		}catch(any e){
-			throw("Query failed: #e.detail#: <br />#arguments.sql#", "dbean.core.Gateway");
+			throw(message:e.message, type:"dbean.core.Gateway", detail:e.detail,
+				extendedinfo: "Generated SQL : #arguments.sql#<br />SQL Parameters : #serializeJSON(arguments.params)#");
 		}
 		if(isNull(local.q)){
 			return local.result;
