@@ -180,6 +180,7 @@ component{
 			for(local.joinCol in local.tempJoinCols){
 				local.joinCol = replaceNoCase(local.joinCol, " AS ", "~");
 				local.joinCol = trim(listLast(local.joinCol, "~"));
+				local.joinCol = trim(listLast(local.joinCol, "."));
 				arrayAppend(variables._config.joinCols, local.joinCol);
 				variables._config.colHash[local.joinCol] = "JOIN";
 			}
