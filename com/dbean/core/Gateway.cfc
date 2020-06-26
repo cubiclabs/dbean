@@ -386,7 +386,14 @@ component{
 		if(!structKeyExists(arguments.options, "datasource")){
 			arguments.options.datasource = DSN();
 		}
-		return queryExecute(arguments.sql, local.params, arguments.options);
+		arguments.options.result = "local.result";
+		local.q = queryExecute(arguments.sql, local.params, arguments.options);
+		if(isNull(local.q)){
+			return local.result;
+		}else{
+			return local.q;
+		}
+		
 	}
 	
 	/**
@@ -451,8 +458,8 @@ component{
 	/**
 	* @hint attempts to determine an insert ID from a given query
 	*/
-	public any function getInsertID(query q){
-		local.testKeys = listToArray("IDENTITYCOL,ROWID,SYB_IDENTITY,SERIAL_COL,KEY_VALUE,GENERATED_KEY");
+	public any function getInsertID(any q){
+		local.testKeys = listToArray("IDENTITYCOL,ROWID,SYB_IDENTITY,SERIAL_COL,KEY_VALUE,GENERATED_KEY,generatedKey");
 		for(local.key in local.testKeys){
 			if(isDefined("arguments.q.#local.key#")){
 				return arguments.q[local.key];

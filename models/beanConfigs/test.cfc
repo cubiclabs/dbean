@@ -27,10 +27,10 @@ component{
 					return now();
 				},
 				//update: false
-				default: function(){
+				"default": function(){
 					return dateAdd("yyyy", -20, now());
 				}
 			}
 		]
-	}
+	};
 }

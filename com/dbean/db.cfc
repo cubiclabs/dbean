@@ -103,14 +103,9 @@ component{
 		numeric limitOffset=0,
 		boolean withTotal=false,
 		any data){
-		return new core.Iterator(this,
-			arguments.beanName,
-			arguments.where,
-			arguments.orderBy,
-			arguments.limit,
-			arguments.limitOffset,
-			arguments.withTotal,
-			arguments.data);
+		local.args = arguments;
+		local.args.dbObject = this;
+		return new core.Iterator(argumentCollection: local.args);
 	}
 
 	

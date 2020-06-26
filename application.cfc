@@ -10,7 +10,7 @@
 	//this.sessioncookie.httponly = true;
 	//this.sessionTimeout = createTimeSpan(0, 0, 30, 0);
 
-	include template=".secrets.cfm";
+	include ".secrets.cfm";
 
 	this.datasources["test"] = {
 		class: 'com.microsoft.sqlserver.jdbc.SQLServerDriver',

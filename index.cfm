@@ -32,21 +32,21 @@
 
 <cfdump var="#db.gateway()
 	.fromBean("test")
-	//.select("test_id, name, startDate")
-	//.where("bool = :bool")
-	//.withParam("bool", 1)
+	<!---.select("test_id, name, startDate")
+	.where("bool = :bool")
+	.withParam("bool", 1) --->
 	.limit(3, 0, true)
 	.orderBy("startDate ASC")
 	.get()#">
 
 <cfdump var="#db.gateway()
 	.from("tbl_test")
-	//.select("test_id, name, startDate")
+	<!--- .select("test_id, name, startDate") --->
 	.where("bool = :bool")
 	.withParam("bool", 1, {model: "test"})
-	//.withParam("bool", 1)
+	<!--- .withParam("bool", 1) --->
 	.orderBy("startDate ASC")
-	//.usingBeanConfig(db.getBeanConfig("test"))
+	<!--- .usingBeanConfig(db.getBeanConfig("test")) --->
 	.get()#">
 
 
@@ -69,6 +69,7 @@
 <cfloop condition="it.hasNext()">
 	<cfset item = it.next()>
 	<!-- do stuff in here -->
+	<cfoutput>#it.currentPos()#</cfoutput>
 	<cfdump var="#item.snapshot()#">
 	<cfdump var="#item.getLinked("categories")#">
 </cfloop>
