@@ -156,10 +156,12 @@ component{
 		variables._config.flavour = local.schema.flavour;
 
 		variables._config.colList = "";
+		variables._config.scopedColList = "";
 		variables._config.hasPK = false;
 		variables._config.colHash = {};
 		for(local.col in variables._config.cols){
 			variables._config.colList = listAppend(variables._config.colList, local.col.name);
+			variables._config.scopedColList = listAppend(variables._config.scopedColList, variables._config.table & "." & local.col.name);
 			variables._config.colHash[local.col.name] = local.col;
 			if(structKeyExists(local.col, "pk") AND local.col.pk){
 				variables._config.pk = local.col;
@@ -239,9 +241,9 @@ component{
 	*/
 	public any function columnList(){
 		if(len(variables._config.joinColList)){
-			return listAppend(variables._config.colList, variables._config.joinColList);
+			return listAppend(variables._config.scopedColList, variables._config.joinColList);
 		}
-		return variables._config.colList;
+		return variables._config.scopedColList;
 	}
 
 	/**
@@ -330,8 +332,11 @@ component{
 	/**
 	* @hint returns the column name of our primary key
 	*/
-	public string function getPK(){
+	public string function getPK(boolean scoped=false){
 		if(variables._config.hasPK){
+			if(arguments.scoped){
+				return variables._config.table & "." & variables._config.pk.name;
+			}
 			return variables._config.pk.name;
 		}
 		return "";

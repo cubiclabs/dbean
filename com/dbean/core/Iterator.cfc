@@ -28,6 +28,7 @@ component{
 		any dbObject,
 		string beanName,
 		string where="",
+		any params={},
 		string orderBy="",
 		numeric limit=0,
 		numeric limitOffset=0,
@@ -44,6 +45,7 @@ component{
 			local.dec = db().gateway(local.beanInfo.schema)
 				.fromBean(local.beanInfo.beanName)
 				.where(arguments.where)
+				.withParams(arguments.params)
 				.orderBy(arguments.orderBy);
 
 			// test for limit

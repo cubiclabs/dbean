@@ -46,7 +46,7 @@ component{
 	public query function getBean(string beanName, any pkValue){
 		local.beanConfig = db().getBeanConfig(arguments.beanName, schemaName());
 		return fromBean(arguments.beanName)
-			.where(local.beanConfig.getPK() & "= :pk")
+			.where(local.beanConfig.getPK(true) & "= :pk")
 			.withParams({
 				pk: arguments.pkValue
 			})
@@ -387,7 +387,12 @@ component{
 			arguments.options.datasource = DSN();
 		}
 		arguments.options.result = "local.result";
-		local.q = queryExecute(arguments.sql, local.params, arguments.options);
+
+		try{
+			local.q = queryExecute(arguments.sql, local.params, arguments.options);
+		}catch(any e){
+			throw("Query failed: #e.detail#: <br />#arguments.sql#", "dbean.core.Gateway");
+		}
 		if(isNull(local.q)){
 			return local.result;
 		}else{

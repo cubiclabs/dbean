@@ -59,7 +59,10 @@ component{
 	/**
 	* @hint returns our primary key column name
 	*/
-	public string function PK(){
+	public string function PK(boolean scoped=false){
+		if(arguments.scoped){
+			return config().table() & "." & config().getPK();
+		}
 		return config().getPK();
 	}
 
@@ -110,7 +113,7 @@ component{
 				local.dec = gateway().updateBean(name());
 				setBeanDeclarationParamters(local.dec, "update");
 
-				local.dec.where(PK() & "= :pk")
+				local.dec.where(PK(true) & "= :pk")
 					.withParam("pk", getID())
 					.go();
 
@@ -186,7 +189,7 @@ component{
 
 				// delete our bean
 				gateway().deleteBean(name())
-					.where(PK() & "= :pk")
+					.where(PK(true) & "= :pk")
 					.withParam("pk", getID())
 					.go();
 	
@@ -357,9 +360,9 @@ component{
 
 		// build our query
 		local.dec = gateway().fromBean(local.relatedModel.getBeanName());
-		local.where = "#local.relatedPK# IN (SELECT #local.linkedConfig.FK2# FROM #local.linkedConfig.intermediary# WHERE #local.linkedConfig.FK1# = :FK1)";
+		local.where = "#local.relatedModel.table()#.#local.relatedPK# IN (SELECT #local.linkedConfig.FK2# FROM #local.linkedConfig.intermediary# WHERE #local.linkedConfig.intermediary#.#local.linkedConfig.FK1# = :FK1)";
 		if(len(arguments.condition)){
-			local.where = local.where & " AND " & arguments.condition;
+			local.where = local.where & " AND (" & arguments.condition & ")";
 		}
 		local.dec.where(local.where);
 

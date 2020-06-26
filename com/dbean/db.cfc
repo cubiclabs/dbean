@@ -98,6 +98,7 @@ component{
 	public any function iterator(
 		string beanName,
 		string where="",
+		any params={},
 		string orderBy="",
 		numeric limit=0,
 		numeric limitOffset=0,
