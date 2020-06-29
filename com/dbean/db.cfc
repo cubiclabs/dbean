@@ -128,7 +128,7 @@ component{
 				.getBean(argumentCollection:local.args);
 			
 			if(local.qData.recordCount){
-				local.bean.pop(local.qData);
+				local.bean.pop(data:local.qData, dirty:false);
 			}
 		}
 		return local.bean;
