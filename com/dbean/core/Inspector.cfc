@@ -260,49 +260,64 @@ component{
 		arrayAppend(local.lines, repeatString(local.tab, 2) & "flavour:""" & local.schema.flavour & """,");
 		arrayAppend(local.lines, repeatString(local.tab, 2) & "schemaName:""" & local.schema.schemaName & """,");
 		arrayAppend(local.lines, repeatString(local.tab, 2) & "version:""" & local.schema.version & """,");
-		arrayAppend(local.lines, repeatString(local.tab, 2) & "tables: {");
+		arrayAppend(local.lines, repeatString(local.tab, 2) & "tables: {}");
+		arrayAppend(local.lines, local.tab & "};");
 		
-		
+		arrayAppend(local.lines, '
+
+	variables.tableKeys = #serializeJSON(structKeyArray(local.schema.tables))#;
+
+	function init(){
+		for(local.table in variables.tableKeys){
+			invoke(this, "addTable_##local.table##");
+		}	
+	}
+
+');
+
+
 		local.tables = [];
 		for(local.table in structKeyArray(local.schema.tables)){
 			local.tableLines = [];
 
-			arrayAppend(local.tableLines, repeatString(local.tab, 3) & local.table & ": {");
+			arrayAppend(local.tableLines, repeatString(local.tab, 1) & "function addTable_#local.table#(){");
+			arrayAppend(local.tableLines, repeatString(local.tab, 2) & "this.schema.tables.#local.table# = {");
 			
 			local.tableSchema = local.schema.tables[local.table];
 
-			arrayAppend(local.tableLines, repeatString(local.tab, 4) & "table:""" & local.tableSchema.table & """,");
-			arrayAppend(local.tableLines, repeatString(local.tab, 4) & "pk:""" & local.tableSchema.pk & """,");
-			arrayAppend(local.tableLines, repeatString(local.tab, 4) & "cols:[");
+			arrayAppend(local.tableLines, repeatString(local.tab, 3) & "table:""" & local.tableSchema.table & """,");
+			arrayAppend(local.tableLines, repeatString(local.tab, 3) & "pk:""" & local.tableSchema.pk & """,");
+			arrayAppend(local.tableLines, repeatString(local.tab, 3) & "cols:[");
 
 			local.cols = [];
 			for(local.col in local.tableSchema.cols){
 				local.colLines = [];
 				local.colLineKeys = [];
-				arrayAppend(local.colLines, repeatString(local.tab, 5) & "{");
+				arrayAppend(local.colLines, repeatString(local.tab, 4) & "{");
 				for(local.key in structKeyArray(local.col)){
 					local.valueString = local.col[local.key];
 					if((local.key NEQ "default") AND !isBoolean(local.valueString) AND !isNumeric(local.valueString)){
 						local.valueString = """" & local.valueString & """";
 					}
-					arrayAppend(local.colLineKeys, repeatString(local.tab, 6) & """" & local.key & """" & ":" & local.valueString);
+					arrayAppend(local.colLineKeys, repeatString(local.tab, 5) & """" & local.key & """" & ":" & local.valueString);
 				}
 				arrayAppend(local.colLines, arrayToList(local.colLineKeys, "," & local.crlf));
-				arrayAppend(local.colLines, repeatString(local.tab, 5) & "}");
+				arrayAppend(local.colLines, repeatString(local.tab, 4) & "}");
 				arrayAppend(local.cols, arrayToList(local.colLines, local.crlf));
 			}
 			arrayAppend(local.tableLines, arrayToList(local.cols, "," & local.crlf));
 
-			arrayAppend(local.tableLines, repeatString(local.tab, 4) & "]");
-			arrayAppend(local.tableLines, repeatString(local.tab, 3) & "}");
+			arrayAppend(local.tableLines, repeatString(local.tab, 3) & "]");
+			arrayAppend(local.tableLines, repeatString(local.tab, 2) & "};");
+			arrayAppend(local.tableLines, repeatString(local.tab, 1) & "}");
 
 			arrayAppend(local.tables, arrayToList(local.tableLines, local.crlf));
 		}
-		arrayAppend(local.lines, arrayToList(local.tables, "," & local.crlf));
+		arrayAppend(local.lines, arrayToList(local.tables, local.crlf));
 		
 
-		arrayAppend(local.lines, repeatString(local.tab, 2) & "}");
-		arrayAppend(local.lines, local.tab & "};");
+		//arrayAppend(local.lines, repeatString(local.tab, 2) & "}");
+		//arrayAppend(local.lines, local.tab & "};");
 		arrayAppend(local.lines, "}");
 
 		return arrayToList(local.lines, local.crlf);
