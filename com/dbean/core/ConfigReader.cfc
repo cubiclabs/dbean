@@ -364,7 +364,8 @@ component{
 		return [
 			"#db().getSetting("tablePrefix")##getBeanName()#",
 			"#db().getSetting("tablePrefix")##getBeanName()#s",
-			getBeanName()
+			"#getBeanName()#",
+			"#getBeanName()#s"
 		];
 	}
 
