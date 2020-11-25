@@ -95,11 +95,10 @@ component{
 		// config is not found...
 		// check our schema for a matching table name and create a blank config if it is valid
 		try{
-			local.table = db().getTableSchema("#db().getSetting("tablePrefix")##variables._beanName#", variables._schema);
 			local.config = {
 				definition: {
 					schema: variables._schema,
-					table: "#db().getSetting("tablePrefix")##variables._beanName#"
+					table: searchForTable()
 				}
 			};
 			return local.config;
@@ -144,9 +143,13 @@ component{
 
 		// set our default table if one is not defined
 		if(!structKeyExists(variables._config, "table")){
-			variables._config.table = "#db().getSetting("tablePrefix")##variables._beanName#";
+			variables._config.table = searchForTable();
 		}
-		
+
+		if(!len(variables._config.table) || !db().tableExists(variables._config.table)){
+			throw("Table for bean '#variables._beanName#' not found in schema", "dbean.core.configreader");
+		}
+
 		// find our table columns and flavour and dsn from our schema definition
 		local.table = db().getTableSchema(variables._config.table, variables._config.schema);
 		local.schema = db().getSchema(variables._config.schema);
@@ -341,6 +344,43 @@ component{
 			return variables._config.pk.name;
 		}
 		return "";
+	}
+
+	/**
+	* @hint returns an array of possible table names based on our bean name
+	*/
+	public array function getTableOptions(){
+		return [
+			"#db().getSetting("tablePrefix")##getBeanName()#",
+			"#db().getSetting("tablePrefix")##getBeanName()#s",
+			getBeanName()
+		];
+	}
+
+	/**
+	* @hint returns an array of possible table names based on our bean name
+	*/
+	public array function getTableOptions(){
+		return [
+			"#db().getSetting("tablePrefix")##getBeanName()#",
+			"#db().getSetting("tablePrefix")##getBeanName()#s",
+			getBeanName()
+		];
+	}
+
+
+	/**
+	* @hint searches for a table in our schema based on our bean name
+	*/
+	public string function searchForTable(){
+		local.tableOptions = getTableOptions();
+		for(local.testTableName in local.tableOptions){
+			if(db().tableExists(local.testTableName, variables._schema)){
+				return local.testTableName;
+			}
+		}
+
+		return ""; // table not found
 	}
 
 }

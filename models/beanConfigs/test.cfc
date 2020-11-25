@@ -1,7 +1,7 @@
 component{
 	this.definition = {
 		schema: "default",
-		table: "tbl_test",
+		// table: "tbl_test",
 		joins: [
 			{
 				table: "tbl_relation",

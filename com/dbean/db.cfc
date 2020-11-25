@@ -68,6 +68,13 @@ component{
 		return getSchema(arguments.schemaName).tables[arguments.table];
 	}
 
+	/**
+	* @hint returns true if a given table name exists in our schema
+	*/
+	public boolean function tableExists(string table, string schemaName="default"){
+		return structKeyExists(getSchema(arguments.schemaName).tables, arguments.table);
+	}
+
 
 	/**
 	* @hint parses a beanName string to split into the bean name and its schema
