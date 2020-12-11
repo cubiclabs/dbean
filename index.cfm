@@ -64,6 +64,13 @@
 <cfdump var="#bean.snapshot()#">
 <cfdump var="#bean.getLinked("categories")#">
 
+GET BY ARG
+<cfset bean = testService.bean({
+	"name": "Dave Wagga",
+	"bool": true
+})>
+<cfdump var="#bean.snapshot()#">
+
 
 <cfset it = db.iterator("test")>
 <cfloop condition="it.hasNext()">

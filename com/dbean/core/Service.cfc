@@ -30,7 +30,7 @@ component{
 	/**
 	* @hint bean helper function
 	*/
-	public any function bean(numeric pk=0, any params={}, string beanName=variables._bean){
+	public any function bean(any pk=0, any params={}, string beanName=variables._bean){
 		local.schemaBeanName = variables._schema & "." & arguments.beanName;
 
 		local.args = {

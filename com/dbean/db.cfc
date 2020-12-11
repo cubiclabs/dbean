@@ -125,7 +125,7 @@ component{
 		local.beanConfig = getBeanConfig(local.beanInfo.beanName, local.beanInfo.schema);
 		local.bean = new core.Bean(local.beanConfig);
 		
-		if(arguments.pkValue NEQ 0){
+		if(isStruct(arguments.pkValue) || arguments.pkValue NEQ 0){
 			local.args = {
 				beanName: local.beanInfo.beanName,
 				pkValue: arguments.pkValue,

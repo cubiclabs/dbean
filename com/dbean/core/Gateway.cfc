@@ -51,6 +51,15 @@ component{
 			local.params = {
 				pk: arguments.pkValue
 			};
+		}else if(isStruct(arguments.pkValue)){
+			// we are expecting key value pairs where the key is a column and the value is the value to match
+			local.where = [];
+			for(local.col in structKeyArray(arguments.pkValue)){
+				arrayAppend(local.where, "#local.col# = :#local.col#");
+				arguments.params[local.col] = arguments.pkValue[local.col];
+			}
+			local.where = arrayToList(local.where, " AND ");
+			local.params = arguments.params;
 		}else{
 			local.where = arguments.pkValue;
 			local.params = arguments.params;
