@@ -105,7 +105,11 @@ component{
 	/**
 	* @hint save our bean to the database
 	*/
-	public boolean function save(){
+	public boolean function save(boolean dbProxy=true){
+
+		if(arguments.dbProxy){
+			return db().save(this);
+		}
 
 		transaction{
 			if(getID()){
@@ -180,7 +184,12 @@ component{
 	/**
 	* @hint deletes our bean from the database
 	*/
-	public boolean function delete(){
+	public boolean function delete(boolean dbProxy=true){
+
+		if(arguments.dbProxy){
+			return db().delete(this);
+		}
+		
 		if(getID()){
 			transaction{
 

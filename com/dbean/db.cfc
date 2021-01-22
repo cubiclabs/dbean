@@ -145,14 +145,14 @@ component{
 	* @hint proxy for our bean save method
 	*/
 	public boolean function save(any bean){
-		return arguments.bean.save();
+		return arguments.bean.save(false);
 	}
 
 	/**
 	* @hint proxy for our bean delete method
 	*/
 	public boolean function delete(any bean){
-		return arguments.bean.delete();	
+		return arguments.bean.delete(false);	
 	}
 
 	
