@@ -339,19 +339,29 @@ component{
 	/**
 	* @hint returns linked data
 	*/
-	public any function getLinked(string manyToManyName, boolean forceRead=false, string condition="", struct params={}){
-		local.linkedConfig = config().getManyToMany(arguments.manyToManyName);
-		if(isBoolean(local.linkedConfig)){
-			throw(message="Many To Many relationship '#arguments.manyToManyName#' is not defined in bean '#name()#'", type="dbean.bean");
-		}
+	public any function getLinked(
+		string name, 
+		boolean forceRead=false, 
+		string condition="", 
+		struct params={}, 
+		boolean asIterator=false){
 
-		if(isLinkedDataDefined(arguments.manyToManyName) AND !arguments.forceRead){
-			return getLinkedData(arguments.manyToManyName);
+		local.linkedConfig = config().getManyToMany(arguments.name);
+		if(isBoolean(local.linkedConfig)){
+			throw(message="Many To Many relationship '#arguments.name#' is not defined in bean '#name()#'", type="dbean.bean");
 		}
 
 		local.relatedModel = db().getBeanConfig(local.linkedConfig.model);
 		local.relatedPK = local.relatedModel.getPK();
-		
+
+		if(isLinkedDataDefined(arguments.name) AND !arguments.forceRead){
+			local.qData = getLinkedData(arguments.name);
+			if(arguments.asIterator){
+				return db().iterator(beanName: local.relatedModel.getBeanName(), data: local.qData);
+			}
+			return local.qData;
+		}
+
 		// query parameters
 		local.params = {
 			FK1: {
@@ -388,9 +398,13 @@ component{
 		local.q = local.dec.get();
 
 		// save data into our bean
-		setLinkedData(arguments.manyToManyName, local.q);
+		setLinkedData(arguments.name, local.q);
 
-		return getLinkedData(arguments.manyToManyName);
+		local.qData = getLinkedData(arguments.name);
+		if(arguments.asIterator){
+			return db().iterator(beanName: local.relatedModel.getBeanName(), data: local.qData);
+		}
+		return local.qData;
 	}
 
 	/**
