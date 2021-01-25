@@ -346,27 +346,25 @@ component{
 		return "";
 	}
 
-	/**
-	* @hint returns an array of possible table names based on our bean name
-	*/
-	public array function getTableOptions(){
-		return [
-			"#db().getSetting("tablePrefix")##getBeanName()#",
-			"#db().getSetting("tablePrefix")##getBeanName()#s",
-			getBeanName()
-		];
-	}
 
 	/**
 	* @hint returns an array of possible table names based on our bean name
 	*/
 	public array function getTableOptions(){
-		return [
+		local.tableOptions = [
 			"#db().getSetting("tablePrefix")##getBeanName()#",
 			"#db().getSetting("tablePrefix")##getBeanName()#s",
 			"#getBeanName()#",
 			"#getBeanName()#s"
 		];
+
+		if(right(getBeanName(), 1) IS "y"){
+			local.ies = mid(getBeanName(), 1, len(getBeanName())-1) & "ies";
+			arrayAppend(local.tableOptions, db().getSetting("tablePrefix") & local.ies);
+			arrayAppend(local.tableOptions, local.ies);
+		}
+
+		return local.tableOptions;
 	}
 
 

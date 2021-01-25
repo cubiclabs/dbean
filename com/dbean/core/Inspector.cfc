@@ -476,7 +476,7 @@ component{
 			case "boolean":
 				return false;
 			case "date":
-				return "now()";
+				return "DateConvert('local2Utc', now())";
 		}
 
 		return """""";
