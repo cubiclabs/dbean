@@ -1,10 +1,19 @@
 component{
 
+	variables._settings = {
+		"isDefaultDateUTC": false
+	};
+
 	/**
 	* @hint constructor
 	*/
-	public function init(){
+	public function init(struct settings={}){
+		structAppend(variables._settings, arguments.settings);
 		return this;
+	}
+
+	public struct function getSettings(){
+		return variables._settings;
 	}
 
 	/**
@@ -476,7 +485,7 @@ component{
 			case "boolean":
 				return false;
 			case "date":
-				return "DateConvert('local2Utc', now())";
+				return getSettings().isDefaultDateUTC ? "DateConvert('local2Utc', now())" : "now()";
 		}
 
 		return """""";

@@ -8,7 +8,8 @@ component{
 			"/models/beanConfigs/",
 			"[model]"
 		],
-		"tablePrefix": "tbl_"
+		"tablePrefix": "tbl_",
+		"isDefaultDateUTC": false
 	};
 	
 	variables._schemas = {};
@@ -227,7 +228,9 @@ component{
 	* @hint builds a configuration file for a given DSN and schema alias name
 	*/
 	public function buildSchema(string dsn, string schemaName="default"){
-		local.inspector = new core.Inspector();
+		local.inspector = new core.Inspector({
+			isDefaultDateUTC : getSettings().isDefaultDateUTC
+		});
 		local.schema = local.inspector.buildSchema(arguments.dsn, arguments.schemaName);
 		fileWrite(getSchemaAbsolutePath(arguments.schemaName), local.schema);
 	}
