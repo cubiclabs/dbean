@@ -346,7 +346,17 @@ component{
 		return "";
 	}
 
+	/**
+	* @hint returns the config for our primary key column
+	*/
+	public struct function getPKConfig(){
+		if(variables._config.hasPK){
+			return getColumn(variables._config.pk.name);
+		}
+		return {};
+	}
 
+	
 	/**
 	* @hint returns an array of possible table names based on our bean name
 	*/

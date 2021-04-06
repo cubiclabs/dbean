@@ -160,7 +160,7 @@ component{
 				if(len(arguments.cols)){
 					declaration.q.cols = arguments.cols;
 				}
-				return execute(declaration);
+				return execute(declaration).q;
 			}
 		};
 
@@ -388,7 +388,7 @@ component{
 	/**
 	* @hint executes an query from a DSL declaration
 	*/
-	public any function execute(struct declaration){
+	public struct function execute(struct declaration){
 		local.sql = SQLWriter().toSQL(arguments.declaration);
 		local.beanConfig = "";
 		if(structKeyExists(arguments.declaration.q, "beanConfig")) local.beanConfig = arguments.declaration.q.beanConfig;
@@ -399,7 +399,7 @@ component{
 	/**
 	* @hint executes an query
 	*/
-	public any function runQuery(string sql, any params={}, struct options={}, any beanConfig=""){
+	public struct function runQuery(string sql, any params={}, struct options={}, any beanConfig=""){
 		local.params = processParams(arguments.params, arguments.beanConfig);
 		if(!structKeyExists(arguments.options, "datasource")){
 			arguments.options.datasource = DSN();
@@ -412,7 +412,13 @@ component{
 			throw(message:e.message, type:"dbean.core.Gateway", detail:e.detail,
 				extendedinfo: "Generated SQL : #arguments.sql#<br />SQL Parameters : #serializeJSON(arguments.params)#");
 		}
-		if(isNull(local.q)){
+		local.ret = {
+			result: local.result,
+			q: isNull(local.q) ? "" : local.q
+		}
+		return local.ret;
+
+		if(isNull(local.q) || left(trim(arguments.sql), 6) == "INSERT"){
 			return local.result;
 		}else{
 			return local.q;
@@ -485,11 +491,11 @@ component{
 	public any function getInsertID(any q){
 		local.testKeys = listToArray("IDENTITYCOL,ROWID,SYB_IDENTITY,SERIAL_COL,KEY_VALUE,GENERATED_KEY,generatedKey");
 		for(local.key in local.testKeys){
-			if(isDefined("arguments.q.#local.key#")){
-				return arguments.q[local.key];
+			if(isDefined("arguments.q.result.#local.key#")){
+				return arguments.q.result[local.key];
 			}
 		}
-		local.qGetID = runQuery("SELECT @@identity AS insertID");
+		local.qGetID = runQuery("SELECT @@identity AS insertID").q;
 		return local.qGetID.insertID;
 	}
 

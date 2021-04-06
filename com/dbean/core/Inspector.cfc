@@ -92,7 +92,10 @@ component{
 			if(structKeyExists(local.col, "autoincrement")){
 				local.autoincrement = local.col.is_autoincrement ? true : false;
 			}else{
-				if(local.col.type_name CONTAINS "identity"){
+				if(local.col.is_primaryKey && len(local.col.column_default_value)){
+					// primary key with a default value - we assume that this is some form of auto increment
+					local.autoincrement = true;
+				}else if(local.col.type_name CONTAINS "identity"){
 					local.autoincrement = true;
 				}
 			}

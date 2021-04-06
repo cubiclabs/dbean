@@ -82,6 +82,19 @@ component{
 	}
 
 	/**
+	* @hint returns true if we have a primary key value
+	*/
+	public boolean function hasID(){
+		local.id = getID();
+		local.pkConfig = config().getPKConfig();
+		if(!structKeyExists(local.pkConfig, "cfDataType") || local.pkConfig.cfDataType == "numeric"){
+			return local.id ? true : false;
+		}else{
+			return len(local.id) ? true : false;
+		}
+	}
+
+	/**
 	* @hint returns true if instance data has changed since it was populated
 	*/
 	public boolean function isDirty(){
@@ -101,6 +114,16 @@ component{
 	public void function setDirty(){
 		variables._isDirty = true;
 	}
+
+	/**
+	* @hint resets our dirty state
+	*/
+	public void function resetDirty(){
+		variables._instancePrev = duplicate(variables._instance);
+		clearDirty();
+		clearLinkedSaveData();
+		clearLinkedData();
+	}
 	
 	/**
 	* @hint save our bean to the database
@@ -112,7 +135,7 @@ component{
 		}
 
 		transaction{
-			if(getID()){
+			if(hasID()){
 				// UPDATE
 				local.dec = gateway().updateBean(name());
 				setBeanDeclarationParamters(local.dec, "update");
@@ -134,6 +157,9 @@ component{
 			// check for many-to-many data
 			saveLinkedData();
 		}
+
+		// reset our dirty state
+		resetDirty();
 
 		return true;
 	}
@@ -189,7 +215,7 @@ component{
 		if(arguments.dbProxy){
 			return db().delete(this);
 		}
-		
+
 		if(getID()){
 			transaction{
 
@@ -278,10 +304,7 @@ component{
 			}
 		}
 		if(!arguments.dirty){
-			variables._instancePrev = duplicate(variables._instance);
-			clearDirty();
-			clearLinkedSaveData();
-			clearLinkedData();
+			resetDirty();
 		}
 	}
 
