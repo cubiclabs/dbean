@@ -29,8 +29,8 @@ component{
 	/**
 	* @hint proxy for our bean save method
 	*/
-	public boolean function save(any bean){
-		return db().save(arguments.bean);
+	public boolean function save(any bean, boolean forceInsert=false){
+		return db().save(arguments.bean, arguments.forceInsert);
 	}
 
 	/**

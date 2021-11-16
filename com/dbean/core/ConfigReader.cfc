@@ -181,11 +181,25 @@ component{
 			}
 			local.tempJoinCols = listToArray(variables._config.joinColList);
 			for(local.joinCol in local.tempJoinCols){
-				local.joinCol = replaceNoCase(local.joinCol, " AS ", "~");
+				local.joinCol = replaceNoCase(local.joinCol, " AS ", "~", "ALL");
 				local.joinCol = trim(listLast(local.joinCol, "~"));
 				local.joinCol = trim(listLast(local.joinCol, "."));
 				arrayAppend(variables._config.joinCols, local.joinCol);
 				variables._config.colHash[local.joinCol] = "JOIN";
+			}
+		}
+		// extra columns
+		variables._config.extraColList = "";
+		variables._config.extraCols = [];
+		if(structKeyExists(variables._config, "extraColumns")){
+			variables._config.extraColList = arrayToList(variables._config.extraColumns);
+
+			for(local.extraCol in variables._config.extraColumns){
+				local.extraCol = replaceNoCase(local.extraCol, " AS ", "~", "ALL");
+				local.extraCol = trim(listLast(local.extraCol, "~"));
+				local.extraCol = trim(listLast(local.extraCol, "."));
+				arrayAppend(variables._config.extraCols, local.extraCol);
+				variables._config.colHash[local.extraCol] = "EXTRA";
 			}
 		}
 
@@ -200,7 +214,7 @@ component{
 	}
 
 	/**
-	* @hint construct a bean instancve data struct from our config and schema table information
+	* @hint construct a bean instance data struct from our config and schema table information
 	*/
 	public struct function buildInstance(){
 		local.inst = {};
@@ -230,6 +244,9 @@ component{
 		for(local.joinCol in variables._config.joinCols){
 			local.inst[local.joinCol] = "";
 		}
+		for(local.extraCol in variables._config.extraCols){
+			local.inst[local.extraCol] = "";
+		}
 		return local.inst;
 	}
 
@@ -244,10 +261,14 @@ component{
 	* @hint returns our column names
 	*/
 	public any function columnList(){
+		local.cols = variables._config.scopedColList
 		if(len(variables._config.joinColList)){
-			return listAppend(variables._config.scopedColList, variables._config.joinColList);
+			local.cols = listAppend(local.cols, variables._config.joinColList);
 		}
-		return variables._config.scopedColList;
+		if(len(variables._config.extraColList)){
+			local.cols = listAppend(local.cols, variables._config.extraColList);
+		}
+		return local.cols;
 	}
 
 	/**

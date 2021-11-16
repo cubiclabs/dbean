@@ -128,14 +128,14 @@ component{
 	/**
 	* @hint save our bean to the database
 	*/
-	public boolean function save(boolean dbProxy=true){
+	public boolean function save(boolean dbProxy=true, boolean forceInsert=false){
 
 		if(arguments.dbProxy){
-			return db().save(this);
+			return db().save(this, arguments.forceInsert);
 		}
 
 		transaction{
-			if(hasID()){
+			if(hasID() && !arguments.forceInsert){
 				// UPDATE
 				local.dec = gateway().updateBean(name());
 				setBeanDeclarationParamters(local.dec, "update");
@@ -146,12 +146,34 @@ component{
 
 			}else{
 				// INSERT
-				local.dec = gateway().insertBean(name());
-				setBeanDeclarationParamters(local.dec, "insert");
 
-				local.result = local.dec.go();
-				local.id = gateway().getInsertID(local.result);
-				setID(local.id);
+				// do we have an auto increment primary key?
+				local.PKConfig = config().getPKConfig();
+
+				if(!hasID() && (!structKeyExists(local.PKConfig, "isAutoIncrement") || !local.PKConfig.isAutoIncrement)){
+
+					lock timeout=3 name="dbean_#name()#"{
+						// maually set our PK insert ID
+						setID(gateway().getPKInsertValue(name()));
+
+						local.dec = gateway().insertBean(name());
+						setBeanDeclarationParamters(local.dec, "insert");
+						local.result = local.dec.go();
+					}
+
+				}else{
+
+					local.dec = gateway().insertBean(name());
+					setBeanDeclarationParamters(local.dec, "insert");
+
+					local.result = local.dec.go();
+					local.id = gateway().getInsertID(local.result);
+					if(local.id){
+						setID(local.id);
+					}
+
+				}
+
 			}
 
 			// check for many-to-many data
@@ -185,7 +207,7 @@ component{
 					}
 					if(structKeyExists(local.special, arguments.type & "Value")){
 						local.specialVal = local.special[arguments.type & "Value"];
-						if(isCustomFunction(local.specialVal)){
+						if(isCustomFunction(local.specialVal) || isClosure(local.specialVal)){
 							local.colVal = local.specialVal(this);
 						}else{
 							local.colVal = local.specialVal;
@@ -198,7 +220,7 @@ component{
 				}
 			}else{
 				// primary key
-				if(!local.col.isAuctoIncrement){
+				if(!local.col.isAutoIncrement){
 					// does not auto increment, so we set this value
 					arguments.dec.set(local.col.name, getID());
 				}

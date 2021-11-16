@@ -145,8 +145,8 @@ component{
 	/**
 	* @hint proxy for our bean save method
 	*/
-	public boolean function save(any bean){
-		return arguments.bean.save(false);
+	public boolean function save(any bean, boolean forceInsert=false){
+		return arguments.bean.save(false, arguments.forceInsert);
 	}
 
 	/**

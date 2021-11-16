@@ -76,6 +76,17 @@ component{
 		return local.dec.get();
 	}
 
+	public numeric function getPKInsertValue(string beanName){
+		local.beanConfig = db().getBeanConfig(arguments.beanName, schemaName());
+		local.pkCol = local.beanConfig.getPK(true);
+		if(len(local.pkCol)){
+			local.dec = fromBean(arguments.beanName).select("MAX(#local.pkCol#) AS maxPK");
+			local.qData = local.dec.get();
+			return val(local.qData.maxPK) + 1;
+		}
+		return 1;
+	}
+
 	/**
 	* @hint SELECT query syntax DSL
 	*/

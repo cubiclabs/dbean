@@ -54,6 +54,11 @@ component{
 		return " FETCH NEXT #arguments.limit#";
 	}
 
+	public string function SQLLimitOffset(numeric limit, numeric offset=0){
+		return SQLOffset(arguments.offset) & SQLLimit(arguments.limit);
+		
+	}
+
 	public string function SQLTotal(struct declaration){
 		if(arguments.declaration.withTotal){
 			arguments.declaration.cols = arguments.declaration.cols & ", COUNT(*) AS _totalRows";
@@ -79,8 +84,7 @@ component{
 						writeOutput(" ORDER BY #local.declaration.orderBy#");
 					}
 					if(local.declaration.limit GT 0){
-						writeOutput(SQLOffset(local.declaration.offset));
-						writeOutput(SQLLimit(local.declaration.limit));
+						writeOutput(SQLLimitOffset(local.declaration.limit, local.declaration.offset));
 					}
 				}
 				break;

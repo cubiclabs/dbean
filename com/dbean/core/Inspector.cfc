@@ -105,7 +105,7 @@ component{
 				"type": listFirst(local.col.type_name, " "),
 				"size": local.col.column_size,
 				"isNullable": local.nullable,
-				"isAuctoIncrement": local.autoincrement,
+				"isAutoIncrement": local.autoincrement,
 				"cfSQLDataType": getCFSQLDataType(local.col.type_name, local.col.column_size),
 				"cfDataType": getCFDataType(local.col.type_name),
 				"default": getDefaultForDataType(getCFDataType(local.col.type_name))
@@ -117,7 +117,7 @@ component{
 			if(local.col.is_primaryKey){
 				local.schema.pk = local.col.column_name;
 				local.colData["pk"] = true;
-			}else if(local.colData.isAuctoIncrement){
+			}else if(local.colData.isAutoIncrement){
 				arrayAppend(local.possiblePK, local.colData);
 			}
 
@@ -340,7 +340,7 @@ component{
 	/**
 	* @hint returns the mapped CFSQLDatatype for a given column data type
 	*/
-	public string function getCFSQLDataType(string datatype, numeric size){
+	public string function getCFSQLDataType(string datatype, any size){
 
 		arguments.datatype = listFirst(arguments.datatype, " ");
 		arguments.datatype = listFirst(arguments.datatype, "(");
