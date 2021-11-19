@@ -9,7 +9,8 @@ component{
 			"[model]"
 		],
 		"tablePrefix": "tbl_",
-		"isDefaultDateUTC": false
+		"isDefaultDateUTC": false,
+		"allowMultiQueries": true
 	};
 	
 	variables._schemas = {};

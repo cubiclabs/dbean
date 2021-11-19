@@ -495,7 +495,14 @@ component{
 					};
 				}
 
-				gateway().runQuery(local.sqlDELETE & chr(13) & chr(10) & local.sqlINSERT, local.params);
+				if(db().getSetting("allowMultiQueries")){
+					gateway().runQuery(local.sqlDELETE & chr(13) & chr(10) & local.sqlINSERT, local.params);
+				}else{
+					gateway().runQuery(local.sqlDELETE, local.params);
+					if(len(local.sqlINSERT)){
+						gateway().runQuery(local.sqlINSERT, local.params);
+					}
+				}
 			}
 		}
 	}
