@@ -89,7 +89,7 @@ component{
 				: structKeyExists(local.col, "is_nullable") ? local.col.is_nullable ? true : false : false;
 			
 			local.autoincrement = false;
-			if(structKeyExists(local.col, "autoincrement")){
+			if(structKeyExists(local.col, "is_autoincrement")){
 				local.autoincrement = local.col.is_autoincrement ? true : false;
 			}else{
 				if(local.col.is_primaryKey && len(local.col.column_default_value)){
