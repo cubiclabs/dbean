@@ -32,9 +32,7 @@ component{
 	* @hint Returns the absolute path to a given cfc
 	*/
 	public string function getLocalPath(any o=this){
-		local.path = listToArray(getMetaData(arguments.o).path, "\");
-		arrayDeleteAt(local.path, arrayLen(local.path)); // remove file name
-		return arrayToList(local.path, "\") & "\";
+		return getDirectoryFrompath(getMetaData(arguments.o).path);
 	}
 
 	/**
@@ -249,6 +247,9 @@ component{
 			variables._schemas[arguments.schemaName].path = local.cfcDotPath;
 			variables._schemas[arguments.schemaName].fullPath = local.schemaCFCPath;
 			variables._schemas[arguments.schemaName].gateway = new core.Gateway(local.schemaConfig, this);
+			if(structKeyExists(getSetting("schemas"), arguments.schemaName)){
+				variables._schemas[arguments.schemaName].dsn = getSetting("schemas")[arguments.schemaName];
+			}
 			return true;
 		}
 		return false;
