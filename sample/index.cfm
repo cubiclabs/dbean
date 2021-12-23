@@ -1,11 +1,11 @@
 
-<cfset db = new com.dbean.db({
+<cfset db = new db({
 	schemas: {
 		default: "test"
 	},
+	schemaPath: "/sample/schemas/",
 	beanConfigPath: [
-		"/models/beanConfigs/",
-		"[model]"
+		"/sample/models/beanConfigs/"
 	]
 })>
 
@@ -69,7 +69,9 @@ GET BY ARG
 	"name": "Dave Wagga",
 	"bool": true
 })>
-<cfdump var="#bean.snapshot()#">
+<cfdump var="#bean.representation("name,test_id,startDate", {
+	"#bean.PK()#": "id"
+})#">
 
 
 <cfset it = db.iterator("test")>

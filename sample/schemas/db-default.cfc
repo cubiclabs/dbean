@@ -1,0 +1,228 @@
+// GENERATED FILE DO NOT EDIT
+component{
+	this.schema = {
+		dsn:"test",
+		flavour:"MSSQL",
+		schemaName:"default",
+		version:"Microsoft SQL Server",
+		tables: {}
+	};
+
+
+	variables.tableKeys = ["tbl_relation","tbl_test","rel_category_in_test","tbl_category"];
+
+	function init(){
+		for(local.table in variables.tableKeys){
+			invoke(this, "addTable_#local.table#");
+		}	
+	}
+
+
+	function addTable_tbl_relation(){
+		this.schema.tables.tbl_relation = {
+			table:"tbl_relation",
+			pk:"relation_id",
+			cols:[
+				{
+					"default":0,
+					"isAutoIncrement":true,
+					"size":10,
+					"isNullable":false,
+					"name":"relation_id",
+					"cfDataType":"numeric",
+					"type":"int",
+					"pk":true,
+					"cfSQLDataType":"cf_sql_integer"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":50,
+					"isNullable":true,
+					"name":"relationName",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_varchar"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":2147483647,
+					"isNullable":true,
+					"name":"relationBody",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_clob"
+				}
+			]
+		};
+	}
+	function addTable_tbl_test(){
+		this.schema.tables.tbl_test = {
+			table:"tbl_test",
+			pk:"test_id",
+			cols:[
+				{
+					"default":0,
+					"isAutoIncrement":true,
+					"size":10,
+					"isNullable":false,
+					"name":"test_id",
+					"cfDataType":"numeric",
+					"type":"int",
+					"pk":true,
+					"cfSQLDataType":"cf_sql_integer"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":50,
+					"isNullable":true,
+					"name":"name",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_varchar"
+				},
+				{
+					"default":false,
+					"isAutoIncrement":false,
+					"size":1,
+					"isNullable":true,
+					"name":"bool",
+					"cfDataType":"boolean",
+					"type":"bit",
+					"cfSQLDataType":"cf_sql_bit"
+				},
+				{
+					"default":now(),
+					"isAutoIncrement":false,
+					"scale":3,
+					"size":23,
+					"isNullable":true,
+					"name":"startDate",
+					"cfDataType":"date",
+					"type":"datetime",
+					"cfSQLDataType":"cf_sql_timestamp"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":2147483647,
+					"isNullable":true,
+					"name":"notes",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_clob"
+				},
+				{
+					"default":0,
+					"isAutoIncrement":false,
+					"size":10,
+					"isNullable":true,
+					"name":"relationID",
+					"cfDataType":"numeric",
+					"type":"int",
+					"cfSQLDataType":"cf_sql_integer"
+				},
+				{
+					"default":0,
+					"isAutoIncrement":false,
+					"scale":2,
+					"size":10,
+					"isNullable":true,
+					"name":"dec",
+					"cfDataType":"numeric",
+					"type":"decimal",
+					"cfSQLDataType":"cf_sql_decimal"
+				}
+			]
+		};
+	}
+	function addTable_rel_category_in_test(){
+		this.schema.tables.rel_category_in_test = {
+			table:"rel_category_in_test",
+			pk:"",
+			cols:[
+				{
+					"default":0,
+					"isAutoIncrement":false,
+					"size":10,
+					"isNullable":true,
+					"name":"testID",
+					"cfDataType":"numeric",
+					"type":"int",
+					"cfSQLDataType":"cf_sql_integer"
+				},
+				{
+					"default":0,
+					"isAutoIncrement":false,
+					"size":10,
+					"isNullable":true,
+					"name":"categoryID",
+					"cfDataType":"numeric",
+					"type":"int",
+					"cfSQLDataType":"cf_sql_integer"
+				}
+			]
+		};
+	}
+	function addTable_tbl_category(){
+		this.schema.tables.tbl_category = {
+			table:"tbl_category",
+			pk:"category_id",
+			cols:[
+				{
+					"default":0,
+					"isAutoIncrement":true,
+					"size":10,
+					"isNullable":false,
+					"name":"category_id",
+					"cfDataType":"numeric",
+					"type":"int",
+					"pk":true,
+					"cfSQLDataType":"cf_sql_integer"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":50,
+					"isNullable":true,
+					"name":"categoryTitle",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_varchar"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":50,
+					"isNullable":true,
+					"name":"categoryAlias",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_varchar"
+				},
+				{
+					"default":"",
+					"isAutoIncrement":false,
+					"size":200,
+					"isNullable":true,
+					"name":"categoryValue",
+					"cfDataType":"string",
+					"type":"nvarchar",
+					"cfSQLDataType":"cf_sql_varchar"
+				},
+				{
+					"default":0,
+					"isAutoIncrement":false,
+					"size":10,
+					"isNullable":true,
+					"name":"categoryOrderKey",
+					"cfDataType":"numeric",
+					"type":"int",
+					"cfSQLDataType":"cf_sql_integer"
+				}
+			]
+		};
+	}
+}

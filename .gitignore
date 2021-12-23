@@ -2,4 +2,4 @@ testbox
 tests
 .env
 .secrets.cfm
-com/dbean/schemas/*
+/schemas/*
