@@ -16,7 +16,7 @@
 		class: 'com.microsoft.sqlserver.jdbc.SQLServerDriver',
 		bundleName: 'mssqljdbc4',
 		bundleVersion: '4.0.2206.100',
-		connectionString: 'jdbc:sqlserver://localhost:1433;DATABASENAME=testData;sendStringParametersAsUnicode=true;SelectMethod=direct',
+		connectionString: 'jdbc:sqlserver://#secrets.DBSERVER#;DATABASENAME=#secrets.DBNAME#;sendStringParametersAsUnicode=true;SelectMethod=direct',
 		username: secrets.DBUSERNAME,
 		password: secrets.DBPASSWORD,
 		connectionLimit: 100 // default:-1
