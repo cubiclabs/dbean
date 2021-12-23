@@ -56,5 +56,30 @@ component{
 		return db().bean(argumentCollection:local.args);
 	}
 
+	/**
+	* @hint return a bean snapshot with an option to return specific columns you can pass in either a bean or a primary key value
+	*/
+	public struct function snapshot(any pk=0, string fields="*", struct fieldMapping={}){
+		if(isSimpleValue(arguments.pk)){
+			local.bean = bean(arguments.pk);
+		}else{
+			local.bean = arguments.pk;
+		}
+		return DB().representationOf(
+			input: local.bean.snapshot(),
+			limit: arguments.fields,
+			mapping: arguments.fieldMapping,
+			singleRow: true);
+	}
+
+	/**
+	* @hint return a bean iterator
+	*/
+	public any function iterator(){
+		if(!structKeyExists(arguments, "beanName")){
+			arguments.beanName = variables._bean
+		}
+		return db().iterator(argumentCollection:arguments);
+	}
 }
 
