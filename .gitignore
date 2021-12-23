@@ -2,4 +2,3 @@ testbox
 tests
 .env
 .secrets.cfm
-/schemas/*
