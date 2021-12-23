@@ -610,4 +610,11 @@ component{
 		return local.tableString;
 	}
 
+
+	/**
+	* @hint returns a representation of our bean
+	*/
+	any function representation(any limit=[], struct mapping={}, struct modifiers={}){
+		return db().representationOf(snapShot(), arguments.limit, arguments.mapping, arguments.modifiers);
+	}
 }

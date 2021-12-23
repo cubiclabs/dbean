@@ -15,6 +15,7 @@ component{
 	
 	variables._schemas = {};
 	variables._beanConfigs = {};
+	variables._version = "1.0.0";
 
 	/**
 	* @hint constructor
@@ -24,8 +25,18 @@ component{
 		return this;
 	}
 
+	/** 
+	* @hint Returns our entire settings struct
+	*/
 	public struct function getSettings(){
 		return variables._settings;
+	}
+
+	/** 
+	* @hint Returns our version number
+	*/
+	public string function version(){
+		return variables._version;
 	}
 
 	/** 
@@ -274,6 +285,8 @@ component{
 	}
 
 
+
+
 	// Bean Config
 	// ======================================================
 	/**
@@ -295,5 +308,81 @@ component{
 		}
 	}
 
+
+
+	/**
+	* @hint returns a representation of a given struct, query or array or structs
+	*/
+	any function representationOf(any input, any limit=[], struct mapping={}, struct modifiers={}, boolean singleRow=false){
+
+		if(isSimpleValue(arguments.limit)){
+			arguments.limit = listToArray(arguments.limit);
+		}
+
+		// local function
+		local.makeRepresentation = function(any input, array limitKeys, struct keyMapping, struct valueModifiers={}){
+
+			local.keys = arguments.limitKeys;
+			if(!arraylen(local.keys)){
+				local.keys = structKeyArray(arguments.input);
+			}
+
+			if(local.keys[1] == "*"){
+				local.additionalKeys = duplicate(arguments.limitKeys);
+				arrayDeleteAt(local.additionalKeys, 1);
+				local.keys = structKeyArray(arguments.input);
+				arrayAppend(local.keys, local.additionalKeys, true);
+			}
+
+			local.rep = {};
+			for(local.key in local.keys){
+
+				local.keyName = local.key;
+				if(structKeyExists(arguments.keyMapping, local.keyName)){
+					local.keyName = arguments.keyMapping[local.keyName];
+				}
+
+				local.value = "";
+				if(structKeyExists(arguments.input, local.key)){
+					local.value = arguments.input[local.key];	
+				}
+				
+				if(structKeyExists(arguments.valueModifiers, local.keyName)){
+					if(isClosure(arguments.valueModifiers[local.keyName])){
+						local.value = arguments.valueModifiers[local.keyName](local.value, local.keyName, arguments.input);
+					}else{
+						local.value = arguments.valueModifiers[local.keyName];
+					}
+				}
+
+				local.rep[local.keyName] = local.value;
+
+			}
+
+			return local.rep;
+		};
+
+		if(isStruct(arguments.input)){
+			return local.makeRepresentation(arguments.input, arguments.limit, arguments.mapping, arguments.modifiers);
+		}
+
+		if(isArray(arguments.input) || isQuery(arguments.input)){
+			local.out = [];
+
+			for(local.row in arguments.input){
+				arrayAppend(local.out, local.makeRepresentation(local.row, arguments.limit, arguments.mapping, arguments.modifiers));
+			}
+
+			if(arguments.singleRow && arrayLen(local.out) == 1){
+				return local.out[1];
+			}
+
+			return local.out;
+		}
+
+
+
+		throw(type="RepresentationOf", message="Invalid input type. Must be either a struct, an array of structs or a query");
+	}
 
 }
