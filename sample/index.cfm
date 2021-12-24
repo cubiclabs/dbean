@@ -40,13 +40,13 @@
 <h2>Get linked data</h2>
 <code><pre>
 testBean = db.bean("test", 1);
-testBean.getLinked("categories");
+testBean.linked("categories");
 </pre></code>
 <cfset testBean = db.bean("test", 1)>
-<cfdump var="#testBean.getLinked("categories")#">
+<cfdump var="#testBean.linked("categories")#">
 
 <h2>Set linked data</h2>
-<code>testBean.setLinked("categories", [1,4]);</code>
+<code>testBean.makeLinked("categories", [1,4]);</code>
 
 
 
@@ -122,5 +122,5 @@ while(it.hasNext()){
 	<!-- do stuff in here -->
 	<cfoutput>#it.currentPos()# of #it.recordCount()#</cfoutput>
 	<cfdump var="#item.snapshot()#">
-	<cfdump var="#item.getLinked("categories")#">
+	<cfdump var="#item.linked("categories")#">
 </cfloop>

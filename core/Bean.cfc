@@ -78,7 +78,7 @@ component{
 	*/
 	public string function setID(any id){
 		variables._instance[PK()] = arguments.id;
-		setDirty();
+		makeDirty();
 	}
 
 	/**
@@ -111,7 +111,7 @@ component{
 	/**
 	* @hint sets our dirty flag
 	*/
-	public void function setDirty(){
+	public void function makeDirty(){
 		variables._isDirty = true;
 	}
 
@@ -138,7 +138,7 @@ component{
 			if(hasID() && !arguments.forceInsert){
 				// UPDATE
 				local.dec = gateway().updateBean(name());
-				setBeanDeclarationParamters(local.dec, "update");
+				beanDeclarationParamters(local.dec, "update");
 
 				local.dec.where(PK(true) & "= :pk")
 					.withParam("pk", getID())
@@ -157,14 +157,14 @@ component{
 						setID(gateway().getPKInsertValue(name()));
 
 						local.dec = gateway().insertBean(name());
-						setBeanDeclarationParamters(local.dec, "insert");
+						beanDeclarationParamters(local.dec, "insert");
 						local.result = local.dec.go();
 					}
 
 				}else{
 
 					local.dec = gateway().insertBean(name());
-					setBeanDeclarationParamters(local.dec, "insert");
+					beanDeclarationParamters(local.dec, "insert");
 
 					local.result = local.dec.go();
 					local.id = gateway().getInsertID(local.result);
@@ -189,7 +189,7 @@ component{
 	/**
 	* @hint set query declaration parameters, checking for special columns as we go
 	*/
-	public void function setBeanDeclarationParamters(any dec, string type=""){
+	public void function beanDeclarationParamters(any dec, string type=""){
 		for(local.col in config().columns()){
 			if(!structKeyExists(local.col, "pk") OR !local.col.pk){
 
@@ -283,7 +283,7 @@ component{
 		
 		if(config().isColumnDefined(arguments.key)){
 			variables._instance[arguments.key] = arguments.value;
-			setDirty();
+			makeDirty();
 		}else{
 			//throw(message="Key name '#arguments.key#' is not defined in this instance", type="DB Bean");
 		}
@@ -384,7 +384,7 @@ component{
 	/**
 	* @hint returns linked data
 	*/
-	public any function getLinked(
+	public any function linked(
 		string name, 
 		boolean forceRead=false, 
 		string condition="", 
@@ -400,7 +400,7 @@ component{
 		local.relatedPK = local.relatedModel.getPK();
 
 		if(isLinkedDataDefined(arguments.name) AND !arguments.forceRead){
-			local.qData = getLinkedData(arguments.name);
+			local.qData = linkedData(arguments.name);
 			if(arguments.asIterator){
 				return db().iterator(beanName: local.relatedModel.getBeanName(), data: local.qData);
 			}
@@ -443,9 +443,9 @@ component{
 		local.q = local.dec.get();
 
 		// save data into our bean
-		setLinkedData(arguments.name, local.q);
+		makeLinkedData(arguments.name, local.q);
 
-		local.qData = getLinkedData(arguments.name);
+		local.qData = linkedData(arguments.name);
 		if(arguments.asIterator){
 			return db().iterator(beanName: local.relatedModel.getBeanName(), data: local.qData);
 		}
@@ -456,7 +456,7 @@ component{
 	* @hint save any linked data within our bean
 	*/
 	public any function saveLinkedData(){
-		local.linkedDataToSave = getLinkedSaveData();
+		local.linkedDataToSave = linkedSaveData();
 		for(local.linkedKey in local.linkedDataToSave){
 
 			local.linkedConfig = config().getManyToMany(local.linkedKey);
@@ -518,7 +518,7 @@ component{
 	/**
 	* @hint returns the contents of a linked data key
 	*/
-	public any function getLinkedData(string key=""){
+	public any function linkedData(string key=""){
 		if(!len(arguments.key)){
 			return variables._linkedData;
 		}
@@ -531,7 +531,7 @@ component{
 	/**
 	* @hint sets a value for a linked data key
 	*/
-	public void function setLinkedData(string key, any value){
+	public void function makeLinkedData(string key, any value){
 		variables._linkedData[arguments.key] = arguments.value;
 	}
 
@@ -549,7 +549,7 @@ component{
 	/**
 	* @hint returns the contents of a linked save data key
 	*/
-	public any function getLinkedSaveData(string key=""){
+	public any function linkedSaveData(string key=""){
 		if(!len(arguments.key)){
 			return variables._linkedSaveData;
 		}
@@ -562,7 +562,7 @@ component{
 	/**
 	* @hint sets a value for a linked save data key
 	*/
-	public void function setLinked(string manyToManyName, any value){
+	public void function makeLinked(string manyToManyName, any value){
 		variables._linkedSaveData[arguments.manyToManyName] = arguments.value;
 	}
 
