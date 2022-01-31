@@ -81,5 +81,25 @@ component{
 		}
 		return db().iterator(argumentCollection:arguments);
 	}
+
+	/**
+	* @hint used to capture getBy[columnName] which can be used to get a bean using a specific column
+	*/
+	public any function onMissingMethod(string missingMethodName, struct missingMethodArguments){
+
+		if(len(arguments.missingMethodName) GTE 6){
+			local.param = mid(arguments.missingMethodName, 6, len(arguments.missingMethodName));
+			local.fnc = left(arguments.missingMethodName, 5);
+			switch(local.fnc){
+				case "getBy":
+					local.beanParams = {};
+					local.beanParam[local.param] = arguments.missingMethodArguments.1;
+					return bean(local.beanParams);
+					break;
+			}
+		}
+		
+		throw(message="Method name '#arguments.missingMethodName#' is not defined", type="DB Service");
+	}
 }
 
