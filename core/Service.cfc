@@ -93,7 +93,7 @@ component{
 			switch(local.fnc){
 				case "getBy":
 					local.beanParams = {};
-					local.beanParam[local.param] = arguments.missingMethodArguments.1;
+					local.beanParams[local.param] = arguments.missingMethodArguments.1;
 					return bean(local.beanParams);
 					break;
 			}
