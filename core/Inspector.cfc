@@ -1,7 +1,8 @@
 component{
 
 	variables._settings = {
-		"isDefaultDateUTC": false
+		"isDefaultDateUTC": false,
+		"isBooleanNumeric": false
 	};
 
 	/**
@@ -486,7 +487,7 @@ component{
 			case "numeric":
 				return 0;
 			case "boolean":
-				return false;
+				return getSettings().isBooleanNumeric ? 0 : false;
 			case "date":
 				return getSettings().isDefaultDateUTC ? "DateConvert('local2Utc', now())" : "now()";
 		}

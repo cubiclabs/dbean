@@ -113,7 +113,7 @@ while(it.hasNext()){
 	item = it.next();		
 	writeOutput(it.currentPosition() & " of " & it.recordCount());
 	writeDump(item.snapshot());
-	writeDump(item.getLinked("categories"));
+	writeDump(item.linked("categories"));
 }
 </pre></code>
 <cfset it = db.iterator("test")>

@@ -10,6 +10,7 @@ component{
 		],
 		"tablePrefix": "tbl_",
 		"isDefaultDateUTC": false,
+		"isBooleanNumeric": false,
 		"allowMultiQueries": true
 	};
 	
@@ -239,7 +240,8 @@ component{
 	*/
 	public function buildSchema(string dsn, string schemaName="default"){
 		local.inspector = new core.Inspector({
-			isDefaultDateUTC : getSettings().isDefaultDateUTC
+			isDefaultDateUTC : getSettings().isDefaultDateUTC,
+			isBooleanNumeric : getSettings().isBooleanNumeric
 		});
 		local.schema = local.inspector.buildSchema(arguments.dsn, arguments.schemaName);
 		fileWrite(getSchemaAbsolutePath(arguments.schemaName), local.schema);
