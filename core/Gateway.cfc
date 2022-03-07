@@ -55,7 +55,8 @@ component{
 			// we are expecting key value pairs where the key is a column and the value is the value to match
 			local.where = [];
 			for(local.col in structKeyArray(arguments.pkValue)){
-				arrayAppend(local.where, "#local.col# = :#local.col#");
+				local.paramName = replaceNoCase(local.col, ".", "_", "ALL");
+				arrayAppend(local.where, "#local.col# = :#local.paramName#");
 				arguments.params[local.col] = arguments.pkValue[local.col];
 			}
 			local.where = arrayToList(local.where, " AND ");
