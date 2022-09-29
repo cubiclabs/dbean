@@ -1,5 +1,8 @@
 component extends="baseSQL"{
 
+	variables._columnEscapeOpen = "`";
+	variables._columnEscapeClose = "`";
+
 	public string function SQLLimit(numeric limit){
 		return " LIMIT #arguments.limit#";
 	}

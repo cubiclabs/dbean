@@ -2,12 +2,22 @@ component{
 
 	variables.tableSelects = {};
 
+	variables._columnEscapeOpen = "[";
+	variables._columnEscapeClose = "]";
 
 	/**
 	* @hint constructor
 	*/
 	public any function init(){
 		return this;
+	}
+
+	public string function columnEscapeOpen(){
+		return variables._columnEscapeOpen;
+	}
+
+	public string function columnEscapeClose(){
+		return variables._columnEscapeClose;
 	}
 
 
@@ -93,7 +103,7 @@ component{
 					writeOutput("UPDATE #local.declaration.tableName# SET ");
 					local.setter = [];
 					for(local.col in local.declaration.cols){
-						arrayAppend(local.setter, local.col.name & " = :" & local.col.name);
+						arrayAppend(local.setter, columnEscapeOpen() & local.col.name & columnEscapeClose() & " = :" & local.col.name);
 					}
 					writeOutput(arrayToList(local.setter, ", "));
 					if(len(local.declaration.where)){
@@ -108,7 +118,7 @@ component{
 					local.setter = [];
 					local.values = [];
 					for(local.col in local.declaration.cols){
-						arrayAppend(local.setter, local.col.name);
+						arrayAppend(local.setter, columnEscapeOpen() & local.col.name & columnEscapeClose());
 						arrayAppend(local.values, ":" & local.col.name);
 					}
 					writeOutput(arrayToList(local.setter, ", ") & ") VALUES (" & arrayToList(local.values, ", ") & ")");

@@ -164,7 +164,7 @@ component{
 		variables._config.colHash = {};
 		for(local.col in variables._config.cols){
 			variables._config.colList = listAppend(variables._config.colList, local.col.name);
-			variables._config.scopedColList = listAppend(variables._config.scopedColList, variables._config.table & "." & local.col.name);
+			variables._config.scopedColList = listAppend(variables._config.scopedColList, variables._config.table & "." & db().gateway().SQLWriter().columnEscapeOpen() & local.col.name & db().gateway().SQLWriter().columnEscapeClose());
 			variables._config.colHash[local.col.name] = local.col;
 			if(structKeyExists(local.col, "pk") AND local.col.pk){
 				variables._config.pk = local.col;

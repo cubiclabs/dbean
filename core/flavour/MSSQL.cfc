@@ -1,5 +1,8 @@
 component extends="baseSQL"{
 
+	variables._columnEscapeOpen = "[";
+	variables._columnEscapeClose = "]";
+	
 	public string function SQLOffset(numeric offset){
 		return " OFFSET #arguments.offset# ROWS";
 	}
