@@ -57,7 +57,7 @@ component{
 			for(local.col in structKeyArray(arguments.pkValue)){
 				local.paramName = replaceNoCase(local.col, ".", "_", "ALL");
 				arrayAppend(local.where, "#local.col# = :#local.paramName#");
-				arguments.params[local.col] = arguments.pkValue[local.col];
+				arguments.params[local.paramName] = arguments.pkValue[local.col];
 			}
 			local.where = arrayToList(local.where, " AND ");
 			local.params = arguments.params;
