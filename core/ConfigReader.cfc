@@ -328,7 +328,7 @@ component{
 	/**
 	* @hint returns a config column 
 	*/
-	public struct function getColumn(string colName){
+	public any function getColumn(string colName){
 		return variables._config.colHash[arguments.colName];
 	}
 

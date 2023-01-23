@@ -466,19 +466,21 @@ component{
 
 						if(local.columnConfig.isColumnDefined(local.configCol)){
 							local.col = local.columnConfig.getColumn(local.configCol);
-							if(isStruct(local.value)){
-								arguments.params[local.key].cfsqltype = local.col.cfSQLDataType;
-							}else{
-								arguments.params[local.key] = {
-									value: local.value,
-									cfsqltype: local.col.cfSQLDataType
-								};
-							}
-							// check fro numeric scale
-							if(local.col.type IS "numeric" 
-								AND structKeyExists(local.col, "scale")
-								AND !structKeyExists(arguments.params[local.key], "scale")){
-								arguments.params[local.key].scale = local.col.scale;
+							if(isStruct(local.col)){
+								if(isStruct(local.value)){
+									arguments.params[local.key].cfsqltype = local.col.cfSQLDataType;
+								}else{
+									arguments.params[local.key] = {
+										value: local.value,
+										cfsqltype: local.col.cfSQLDataType
+									};
+								}
+								// check for numeric scale
+								if(local.col.type IS "numeric" 
+									AND structKeyExists(local.col, "scale")
+									AND !structKeyExists(arguments.params[local.key], "scale")){
+									arguments.params[local.key].scale = local.col.scale;
+								}
 							}
 						}else if(local.key IS "pk"){
 							if(isStruct(local.value)){
