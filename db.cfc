@@ -16,7 +16,7 @@ component{
 	
 	variables._schemas = {};
 	variables._beanConfigs = {};
-	variables._version = "1.1.3";
+	variables._version = "1.1.4";
 
 	/**
 	* @hint constructor

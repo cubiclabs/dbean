@@ -350,7 +350,8 @@ component{
 		var hasBeanConfig = false;
 		if(arguments.isBean){
 			local.beanConfig = db().getBeanConfig(arguments.tableName, schemaName());
-			arguments.tableName = local.beanConfig.table();
+			//arguments.tableName = local.beanConfig.table();
+			arguments.tableName = SQLWriter().tableSelect(local.beanConfig);
 			hasBeanConfig = true;
 		}
 

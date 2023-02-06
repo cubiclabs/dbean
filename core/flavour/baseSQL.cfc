@@ -126,7 +126,12 @@ component{
 				break;
 			case "DELETE":
 				savecontent variable="local.sql"{
-					writeOutput("DELETE FROM #local.declaration.tableName#");
+					if(isStruct(local.declaration.beanConfig)){
+						writeOutput("DELETE #local.declaration.beanConfig.table()# FROM #local.declaration.tableName#");
+					}else{
+						writeOutput("DELETE FROM #local.declaration.tableName#");
+					}
+					
 					if(len(local.declaration.where)){
 						writeOutput(" WHERE #local.declaration.where#");
 					}
