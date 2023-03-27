@@ -30,8 +30,25 @@ component{
 	* @hint proxy for our bean save method
 	*/
 	public boolean function save(any bean, boolean forceInsert=false){
-		return db().save(arguments.bean, arguments.forceInsert);
+		if(beforeSave(arguments.bean, arguments.forceInsert)){
+			local.result = db().save(arguments.bean, arguments.forceInsert);
+			afterSave(arguments.bean);
+			return local.result;
+		}
+		return false;
 	}
+
+	/**
+	* @hint called before our save method
+	*/
+	public boolean function beforeSave(any bean, boolean forceInsert=false){
+		return true;
+	}
+
+	/**
+	* @hint called after our save method
+	*/
+	public void function afterSave(any bean){}
 
 	/**
 	* @hint proxy for our bean delete method
