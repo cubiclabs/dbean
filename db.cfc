@@ -16,7 +16,7 @@ component{
 	
 	variables._schemas = {};
 	variables._beanConfigs = {};
-	variables._version = "1.1.4";
+	variables._version = "1.1.5";
 
 	/**
 	* @hint constructor
@@ -315,24 +315,34 @@ component{
 	/**
 	* @hint returns a representation of a given struct, query or array or structs
 	*/
-	any function representationOf(any input, any limit=[], struct mapping={}, struct modifiers={}, boolean singleRow=false){
+	any function representationOf(any input, any limit=[], any exclude=[], struct mapping={}, struct modifiers={}, boolean singleRow=false){
 
-		if(isSimpleValue(arguments.limit)){
+		if(!isArray(arguments.limit)){
 			arguments.limit = listToArray(arguments.limit);
 		}
 
+		if(!isArray(arguments.exclude)){
+			arguments.exclude = listToArray(arguments.exclude);
+		}
+
 		// local function
-		local.makeRepresentation = function(any input, array limitKeys, struct keyMapping, struct valueModifiers={}){
+		local.makeRepresentation = function(any input, array limitKeys, array excludeKeys, struct keyMapping, struct valueModifiers={}){
+
+			local.itemData = arguments.input;
+			if(isObject(arguments.input) && getMetadata(arguments.input).fullname CONTAINS "dbean.core.Bean"){
+				arguments.keyMapping[arguments.input.PK()] = "id"; // map our primary key to 'id'
+				local.itemData = arguments.input.snapshot();
+			}
 
 			local.keys = arguments.limitKeys;
 			if(!arraylen(local.keys)){
-				local.keys = structKeyArray(arguments.input);
+				local.keys = structKeyArray(local.itemData);
 			}
 
 			if(local.keys[1] == "*"){
 				local.additionalKeys = duplicate(arguments.limitKeys);
 				arrayDeleteAt(local.additionalKeys, 1);
-				local.keys = structKeyArray(arguments.input);
+				local.keys = structKeyArray(local.itemData);
 				arrayAppend(local.keys, local.additionalKeys, true);
 			}
 
@@ -345,8 +355,8 @@ component{
 				}
 
 				local.value = "";
-				if(structKeyExists(arguments.input, local.key)){
-					local.value = arguments.input[local.key];	
+				if(structKeyExists(local.itemData, local.key)){
+					local.value = local.itemData[local.key];	
 				}
 				
 				if(structKeyExists(arguments.valueModifiers, local.keyName)){
@@ -361,18 +371,23 @@ component{
 
 			}
 
+			// remove any specified columns
+			for(local.removeKey in arguments.excludeKeys){
+				structDelete(local.rep, local.removeKey);
+			}
+
 			return local.rep;
 		};
 
 		if(isStruct(arguments.input)){
-			return local.makeRepresentation(arguments.input, arguments.limit, arguments.mapping, arguments.modifiers);
+			return local.makeRepresentation(arguments.input, arguments.limit, arguments.exclude, arguments.mapping, arguments.modifiers);
 		}
 
 		if(isArray(arguments.input) || isQuery(arguments.input)){
 			local.out = [];
 
 			for(local.row in arguments.input){
-				arrayAppend(local.out, local.makeRepresentation(local.row, arguments.limit, arguments.mapping, arguments.modifiers));
+				arrayAppend(local.out, local.makeRepresentation(local.row, arguments.limit, arguments.exclude, arguments.mapping, arguments.modifiers));
 			}
 
 			if(arguments.singleRow && arrayLen(local.out) == 1){
@@ -384,7 +399,7 @@ component{
 
 
 
-		throw(type="RepresentationOf", message="Invalid input type. Must be either a struct, an array of structs or a query");
+		throw(type="RepresentationOf", message="Invalid input type. Must be either a struct, an array of structs, db bean, array of db beans or a query");
 	}
 
 }

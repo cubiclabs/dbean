@@ -43,6 +43,15 @@ component{
 	}
 
 	/**
+	* @hint returns a representation of our instance data
+	*/
+	public struct function representationOf(boolean isPrev=false, string fields="*", string exclude="", struct fieldMapping={}, struct modifiers={}){
+		local.data = snapShot(arguments.isPrev);
+		arguments.fieldMapping[PK()] = "id"; // map our primary key to 'id'
+		return db().representationOf(local.data, arguments.fields, arguments.exclude, arguments.fieldMapping, arguments.modifiers);
+	}
+
+	/**
 	* @hint returns our bean name
 	*/
 	public string function name(){

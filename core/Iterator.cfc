@@ -7,11 +7,11 @@ component{
 
 	it = db.iterator(beanName:"News", data:variables.qNews)>
 
-	do{
+	while( it.hasNext() ){
 		item = it.next();
 		// do stuff here
 
-	} while( it.hasNext() );
+	}
 
 
 	*/
@@ -93,6 +93,16 @@ component{
 	*/
 	public numeric function recordCount(){
 		return variables._qData.recordCount;
+	}
+
+	/**
+	* @hint returns the total number of records that the query can contain
+	*/
+	public numeric function totalRows(){
+		if(variables._qData.keyExists("_totalRows")){
+			return val(variables._qData._totalRows);
+		}
+		return recordCount(); 
 	}
 
 	/**
@@ -201,5 +211,20 @@ component{
 		}
 		return false;
 	}
-	
+
+	/**
+	* @hint returns an array of bean represenations
+	*/
+	public array function representationOf(string fields="*", string exclude="", struct fieldMapping={}, struct modifiers={}){
+		local.out = [];
+		resetIndex();
+
+		while( hasNext() ){
+			local.bean = next();
+			// do stuff here
+			arrayAppend(local.out, db().representationOf(local.bean, arguments.fields, arguments.exclude, arguments.fieldMapping, arguments.modifiers));
+		}
+
+		return local.out;
+	}
 }

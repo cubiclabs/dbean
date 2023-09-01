@@ -54,9 +54,25 @@ component{
 	* @hint proxy for our bean delete method
 	*/
 	public boolean function delete(any bean){
-		return db().delete(arguments.bean);	
+		if(beforeDelete(arguments.bean)){
+			local.result = db().delete(arguments.bean);
+			afterDelete(arguments.bean);
+			return local.result;
+		}
+		return false
 	}
 
+	/**
+	* @hint called before our delete method
+	*/
+	public boolean function beforeDelete(any bean){
+		return true;
+	}
+
+	/**
+	* @hint called after our delete method
+	*/
+	public void function afterDelete(any bean){}
 
 	/**
 	* @hint bean helper function
@@ -76,7 +92,7 @@ component{
 	/**
 	* @hint return a bean snapshot with an option to return specific columns you can pass in either a bean or a primary key value
 	*/
-	public struct function snapshot(any pk=0, string fields="*", struct fieldMapping={}){
+	public struct function snapshot(any pk=0, string fields="*", string exclude="", struct fieldMapping={}, struct modifiers={}){
 		if(isSimpleValue(arguments.pk)){
 			local.bean = bean(arguments.pk);
 		}else{
@@ -85,7 +101,9 @@ component{
 		return DB().representationOf(
 			input: local.bean.snapshot(),
 			limit: arguments.fields,
+			exclude: arguments.exclude,
 			mapping: arguments.fieldMapping,
+			modifiers: arguments.modifiers,
 			singleRow: true);
 	}
 
