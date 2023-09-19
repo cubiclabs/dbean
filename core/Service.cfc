@@ -74,6 +74,27 @@ component{
 	*/
 	public void function afterDelete(any bean){}
 
+	/**	
+	* @hint returns a list of base columns for our service bean
+	*/
+	public string function baseColumns(any bean=bean()){
+		return arguments.bean.config().getConfig().colList;
+	}
+	
+	/**	
+	* @hint returns keys in our bean
+	*/
+	public string function columns(any bean=bean()){
+		return structKeyList(snapshot(arguments.bean));
+	}
+
+	/**	
+	* @hint returns our designated bean table
+	*/
+	public string function table(any bean=bean()){
+		return arguments.bean.config().table();
+	}
+
 	/**
 	* @hint bean helper function
 	*/
@@ -105,6 +126,15 @@ component{
 			mapping: arguments.fieldMapping,
 			modifiers: arguments.modifiers,
 			singleRow: true);
+	}
+
+	/**	
+	* @hint returns a formatted bean snapshot just using the base columns
+	*/
+	public struct function baseSnapshot(any bean, string additional=""){
+		local.baseColumns = baseColumns();
+		local.baseColumns = listAppend(local.baseColumns, arguments.additional);
+		return snapshot(arguments.bean, local.baseColumns);
 	}
 
 	/**
