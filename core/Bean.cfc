@@ -12,7 +12,7 @@ component{
 	* @hint constructor
 	*/
 	public function init(any beanConfig){
-		variables._config = arguments.beanConfig;
+		variables._config = duplicate(arguments.beanConfig); // config is transient with the bean so we can mutate it on the fly
 		pop(data:config().buildInstance(), dirty:false);
 		return this;
 	}

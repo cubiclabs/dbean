@@ -31,8 +31,9 @@ component{
 	*/
 	public boolean function save(any bean, boolean forceInsert=false){
 		if(beforeSave(arguments.bean, arguments.forceInsert)){
+			local.prevBean = duplicate(arguments.bean);
 			local.result = db().save(arguments.bean, arguments.forceInsert);
-			afterSave(arguments.bean);
+			afterSave(arguments.bean, local.prevBean);
 			return local.result;
 		}
 		return false;
@@ -48,7 +49,7 @@ component{
 	/**
 	* @hint called after our save method
 	*/
-	public void function afterSave(any bean){}
+	public void function afterSave(any bean, any previouseBean){}
 
 	/**
 	* @hint proxy for our bean delete method

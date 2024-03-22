@@ -16,7 +16,7 @@ component{
 	
 	variables._schemas = {};
 	variables._beanConfigs = {};
-	variables._version = "1.1.6";
+	variables._version = "1.1.7";
 
 	/**
 	* @hint constructor
@@ -292,7 +292,7 @@ component{
 	// Bean Config
 	// ======================================================
 	/**
-	* @hint returns the dot path to a schema config file
+	* @hint returns a beans configuration data - this will get cached
 	*/
 	public any function getBeanConfig(string beanName, string schema="default"){
 		if(structKeyExists(variables._beanConfigs, arguments.schema) 
