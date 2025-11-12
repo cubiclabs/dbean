@@ -402,7 +402,7 @@ component{
 
 		local.linkedConfig = config().getManyToMany(arguments.name);
 		if(isBoolean(local.linkedConfig)){
-			throw(message="Many To Many relationship '#arguments.name#' is not defined in bean '#name()#'", type="dbean.bean");
+			throw(message="Many To Many relationship '#arguments.name#' is not defined in bean '#this.name()#'", type="dbean.bean");
 		}
 
 		local.relatedModel = db().getBeanConfig(local.linkedConfig.model);

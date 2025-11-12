@@ -16,7 +16,7 @@ component{
 	
 	variables._schemas = {};
 	variables._beanConfigs = {};
-	variables._version = "1.1.7";
+	variables._version = "1.1.9";
 
 	/**
 	* @hint constructor
@@ -52,10 +52,15 @@ component{
 	*/
 	public string function getDotPath(string path){
 		local.rootPath = expandPath("/");
+		local.absolutePath = arguments.path;
 		if(!arguments.path CONTAINS ":"){
-			arguments.path = expandPath(arguments.path);
+			local.absolutePath = expandPath(arguments.path);
 		}
-		local.relativePath = replaceNoCase(arguments.path, local.rootPath, "");
+		if(left(local.absolutePath, len(local.rootPath)) == local.rootPath){
+			local.relativePath = replaceNoCase(local.absolutePath, local.rootPath, "");
+		}else{
+			local.relativePath = arguments.path;
+		}
 		local.relativePath = replaceNoCase(local.relativePath, "\", "/", "ALL");
 		local.relativePath = replaceNoCase(local.relativePath, "//", "/", "ALL");
 		local.dotPath = replaceNoCase(local.relativePath, "/", ".", "ALL");

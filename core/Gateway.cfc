@@ -72,8 +72,11 @@ component{
 			.get();
 	}
 
-	public query function getAll(string beanName){
+	public query function getAll(string beanName, boolean asArray=false){
 		local.dec = fromBean(arguments.beanName);
+		if(arguments.asArray){
+			local.dec.withOption("returnType", "array");
+		}
 		return local.dec.get();
 	}
 
@@ -143,6 +146,18 @@ component{
 			withParam: function(string paramName, any paramValue, struct paramOptions={}){
 				arguments.paramOptions.value = arguments.paramValue;
 				declaration.q.params[arguments.paramName] = arguments.paramOptions;
+				return declaration;
+			},
+			withOptions: function(any options){
+				local.dsn = declaration.q.options.dsn;
+				declaration.q.options = arguments.options;
+				if(!structKeyExists(declaration.q.options, "dsn")){
+					declaration.q.options.dsn = local.dsn;
+				}
+				return declaration;
+			},
+			withOption: function(string optionName, any optionsValue){
+				declaration.q.options[arguments.optionName] = arguments.optionsValue;
 				return declaration;
 			},
 			orderBy: function(string orderBy){
