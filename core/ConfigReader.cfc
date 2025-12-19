@@ -385,8 +385,10 @@ component{
 		local.tableOptions = [
 			"#db().getSetting("tablePrefix")##getBeanName()#",
 			"#db().getSetting("tablePrefix")##getBeanName()#s",
+			"#db().getSetting("tablePrefix")##getBeanName()#es",
 			"#getBeanName()#",
-			"#getBeanName()#s"
+			"#getBeanName()#s",
+			"#getBeanName()#es"
 		];
 
 		if(right(getBeanName(), 1) IS "y"){
