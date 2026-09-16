@@ -358,6 +358,8 @@ component{
 					return "cf_sql_clob";
 				}
 				return "cf_sql_char";
+			case "date":
+				return "cf_sql_date";
 			case "datetime": case "datetime2":
 				return "cf_sql_timestamp";
 			case "decimal": case "double":
@@ -434,6 +436,8 @@ component{
 				return "boolean";
 			case "char":
 				return "string";
+			case "date":
+				return "date";
 			case "datetime": case "datetime2":
 				return "date";
 			case "decimal": case "double":
