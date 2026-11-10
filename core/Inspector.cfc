@@ -251,7 +251,9 @@ component{
 		arrayAppend(local.lines, "[/cfscript>");
 
 		//convert to a string
-		local.def = reReplaceNoCase(arrayToList(local.lines, local.crlf), "\[(\/?)cf", "<\1cf", "ALL");
+		// plain replaces rather than a regex backreference, which differs between the perl and java regex engines
+		local.def = replaceNoCase(arrayToList(local.lines, local.crlf), "[/cf", "</cf", "ALL");
+		local.def = replaceNoCase(local.def, "[cf", "<cf", "ALL");
 
 		return local.def;
 	}
